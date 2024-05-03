@@ -26,26 +26,21 @@ class AuthController extends Controller
 {
     public function verify(VerifyRequest $request)
     {
-     $otp = random_int(100000, 999999);
-  $mail_details = [
+        $otp = random_int(100000, 999999);
+        $mail_details = [
             'body' => $otp
         ];
-// return ($mail_details);
-
-Mail::to($request->email)->send(new OtpSend($mail_details));
- $user = new OtpVerify();
-    $user->email= $request->email;
-    $user->otp= $otp;
+        // return ($mail_details);
+        Mail::to($request->email)->send(new OtpSend($mail_details));
+        $user = new OtpVerify();
+        $user->email = $request->email;
+        $user->otp = $otp;
         $user->save();
-
-
-     return response()->json([
+        return response()->json([
             'status' => true,
             'action' => 'User verify otp send',
         ]);
     }
-
-
 
     public function otpVerify(OtpVerifyRequest $request)
     {
@@ -61,152 +56,134 @@ Mail::to($request->email)->send(new OtpSend($mail_details));
             } else {
                 return response()->json([
                     'status' => false,
-                    'action' => 'OTP is invalid',
+                    'action' => 'OTP is invalid, Please enter correct OTP',
                 ]);
             }
         }
     }
 
-public function register(RegisterRequest $request)
-{ 
- $user = new User();
-    $user->first_name = $request->first_name;
+    public function register(RegisterRequest $request)
+    {
+        $user = new User();
+        $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
-    $user->email = $request->email;
-    $user->timezone= Carbon::now('Asia/Karachi');
-      $user->password = Hash::make($request->password);
-    $user->save();
-
-    $userdevice = new UserDevice();
-$userdevice->user_id = $user->uuid;
-
-    $userdevice->device_name = $request->device_name ?? 'No name';
-      $userdevice->device_id = $request->device_id ?? 'No ID';
- $userdevice->timezone = $request->timezone ?? 'No Time';
-    $userdevice->token = $request->fcm_token ?? 'No tocken';
-    $userdevice->save();
-
-    $new  = User::where('uuid', $user->uuid)->first();
-    return response()->json([
-        'status' => true,
-        'action' => 'User register',
-        'data' => $new
-    ]);
-}
-
-
-
-
-
-
-public function login(LoginRequest $request)
-{
-
-//   return ($request);
-    $user = User::Where('email', $request->email)->first();
-// return($user);
-    if ($user) {
-
-      if (Hash::check($request->password, $user->password)) {
-       
-            $userdevice = new UserDevice();
-    $userdevice->user_id = $user->uuid;
-             $userdevice->device_name = $request->device_name ?? 'No name';
-            $userdevice->device_id = $request->device_id ?? 'No ID';
-         $userdevice->timezone = $request->timezone ?? 'No Time';
-            $userdevice->token = $request->fcm_token ?? 'No tocken';
-
-            $userdevice->save();
-
-            return response()->json([
-                'status' => true,
-                'action' => "Login successfully",
-                'data' => $user,
-            ]);
-
-        } else {
-            return response()->json([
-                'status' => false,
-                'action' => 'Password invalid',
-            ]);
-        }
-    }
-    return response()->json([
-        'status' => false,
-        'action' => "Account not found",
-
-    ]);
-}
-public function recoverPassword(RecoverVerifyRequest $request)
-{
-    $user = User::where('email', $request->email)->first();
-// return ($user);
-    if ($user) {
-
-          $otp = random_int(100000, 999999);
-//     return ($otp);
-        $user = new OtpVerify();
-  $user->email = $request->email;
-        $user->otp = $otp;
-
+        $user->email = $request->email;
+        $user->timezone = Carbon::now('Asia/Karachi');
+        $user->password = Hash::make($request->password);
         $user->save();
 
-        $mailDetails = [
-            'body' => $otp,
-            'name' => $user->name
-        ];
-// return (  $mailDetails);
-        Mail::to($request->email)->send(new ForgotOtp($mailDetails));
+        $userdevice = new UserDevice();
+        $userdevice->user_id = $user->uuid;
 
+        $userdevice->device_name = $request->device_name ?? 'No name';
+        $userdevice->device_id = $request->device_id ?? 'No ID';
+        $userdevice->timezone = $request->timezone ?? 'No Time';
+        $userdevice->token = $request->fcm_token ?? 'No tocken';
+        $userdevice->save();
+
+        $new  = User::where('uuid', $user->uuid)->first();
         return response()->json([
             'status' => true,
-            'action' => 'Otp send successfully',
-        ]);
-    } else {
-        return response()->json([
-            'status' => false,
-            'action' => 'Account not found'
+            'action' => 'User register successfuly',
+            'data' => $new
         ]);
     }
-}
 
+    public function login(LoginRequest $request)
+    {
+        //   return ($request);
+        $user = User::Where('email', $request->email)->first();
+        // return($user);
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
+                $userdevice = new UserDevice();
+                $userdevice->user_id = $user->uuid;
+                $userdevice->device_name = $request->device_name ?? 'No name';
+                $userdevice->device_id = $request->device_id ?? 'No ID';
+                $userdevice->timezone = $request->timezone ?? 'No Time';
+                $userdevice->token = $request->fcm_token ?? 'No tocken';
+                $userdevice->save();
 
+                return response()->json([
+                    'status' => true,
+                    'action' => "Login successfully",
+                    'data' => $user,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'action' => 'Password invalid, Please enter correct Password',
+                ]);
+            }
+        }
+        return response()->json([
+            'status' => false,
+            'action' => "Account not found",
 
-public function newPassword(NewPasswordRequest $request)
-{
-       $user = User::where('email', $request->email)->first();
-    
-    if ($user) {
-
-        if (Hash::check($request->password, $user->password)) {
- return response()->json([
-                'status' => false,
-                'action' => "New password is same as old password",
+        ]);
+    }
+    public function recoverPassword(RecoverVerifyRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        // return ($user);
+        if ($user) {
+            $otp = random_int(100000, 999999);
+            //     return ($otp);
+            $user = new OtpVerify();
+            $user->email = $request->email;
+            $user->otp = $otp;
+            $user->save();
+            $mailDetails = [
+                'body' => $otp,
+                'name' => $user->name
+            ];
+            // return (  $mailDetails);
+            Mail::to($request->email)->send(new ForgotOtp($mailDetails));
+            return response()->json([
+                'status' => true,
+                'action' => 'Otp send successfully',
             ]);
         } else {
             return response()->json([
-                'status' => true,
-                'action' => "New password set",
+                'status' => false,
+                'action' => 'Account not found'
             ]);
         }
-        return response()->json([
-            'status' => true,
-            'action' => "New password set"
-        ]);
-    } else {
-        return response()->json([
-            'status' => false,
-            'action' => 'This email  is not registered'
-        ]);
     }
-}
 
-public function social(SocialRequest $request)
+    public function newPassword(NewPasswordRequest $request)
     {
         $user = User::where('email', $request->email)->first();
 
         if ($user) {
 
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'status' => false,
+                    'action' => "New password is same as old password",
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'action' => "Current password is updated",
+                ]);
+            }
+            return response()->json([
+                'status' => true,
+                'action' => "Current password is updated"
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'This email  is not registered'
+            ]);
+        }
+    }
+
+    public function social(SocialRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
             $user = User::find($user->uuid);
             $user->platform = $request->platform;
             $user->platform_id = $request->platform_id;
@@ -217,30 +194,27 @@ public function social(SocialRequest $request)
                 'date' => $user
             ]);
         } else {
-
-               $user = new User();
+            $user = new User();
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
- $user->email = $request->email;
+            $user->email = $request->email;
             $user->platform = $request->platform;
-
-               $user->platform_id = $request->platform_id;
+            $user->platform_id = $request->platform_id;
             $user->save();
 
-      $userdevice = new UserDevice();
+            $userdevice = new UserDevice();
             $userdevice->user_id = $user->uuid;
-
             $userdevice->device_name = $request->device_name ?? 'No name';
-                $userdevice->device_id = $request->device_id ?? 'No ID';
+            $userdevice->device_id = $request->device_id ?? 'No ID';
             $userdevice->timezone = $request->timezone ?? 'No Time';
             $userdevice->token = $request->fcm_token ?? 'No tocken';
-    $userdevice->save();
+            $userdevice->save();
 
             $newuser  = User::where('uuid', $user->uuid)->first();
 
             return response()->json([
                 'status' => true,
-                'action' => 'User register',
+                'action' => 'User register successfully',
                 'data' => $newuser
             ]);
         }
@@ -250,25 +224,21 @@ public function social(SocialRequest $request)
     {
         // return ($request);
         UserDevice::where('user_id', $request->user_id)->where('device_id', $request->device_id)->delete();
-
         return response()->json([
             'status' => true,
-            'action' => 'User logged out'
+            'action' => 'User logged out successfully'
         ]);
     }
 
     public function deleteAccount(DeleteAccountRequest $request)
     {
         $user = User::find($request->user_id);
-
         if ($user) {
-
             if (Hash::check($request->password, $user->password)) {
-
                 $user->delete();
                 return response()->json([
                     'status' => true,
-                    'action' => "Account deleted",
+                    'action' => "Account deleted successfully",
                 ]);
             } else {
                 return response()->json([
@@ -284,20 +254,18 @@ public function social(SocialRequest $request)
         }
     }
 
+
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = User::find($request->user_id);
-        // return ($user );
         if ($user) {
-
+            // return($user->uuid);
+            // return($user->password);
             if (Hash::check($request->old_password, $user->password)) {
-
-
-                  if (Hash::check($request->new_password, $user->password)) {
-
-  return response()->json([
+                if (Hash::check($request->new_password, $user->password)) {
+                    return response()->json([
                         'status' => false,
-                        'action' => "New password is same old password",
+                        'action' => "New password is same as old password",
                     ]);
                 } else {
                     $user->update([
@@ -305,14 +273,15 @@ public function social(SocialRequest $request)
                     ]);
                     return response()->json([
                         'status' => true,
-                        'action' => "Password  change",
+                        'action' => "Password updated successfully",
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'action' => "Current password is wrong",
+                ]);
             }
-            return response()->json([
-                'status' => false,
-                'action' => "Old password is wrong",
-            ]);
         } else {
             return response()->json([
                 'status' => false,
@@ -320,9 +289,4 @@ public function social(SocialRequest $request)
             ]);
         }
     }
-
-
 }
-
-
-

@@ -32,7 +32,7 @@ class ChangePasswordRequest extends FormRequest
     public function messages()
     {
         return [
-            'old_password.required' => 'Please enter the old password',
+            'old_password.required' => 'Please enter the current Password',
             'new_password.required' => 'Please enter the new password',
             'new_password.min' => 'Please enter atleast 6 digit in new password',
         ];
