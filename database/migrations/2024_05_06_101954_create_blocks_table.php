@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
+        Schema::create('blocks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->uuid('tokenable_id');
-            $table->string('tokenable_type');
-            $table->text('token');
-            $table->text('abilities')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->foreignUuid('user_id')->references('uuid')->on('users')->onDelete('cascade');
+            $table->foreignUuid('block_id')->references('uuid')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
-        
     }
 
     /**
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('personal_access_tokens');
+        Schema::dropIfExists('blocks');
     }
 };

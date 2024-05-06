@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\AuthController;
+use App\Http\Controllers\Admin\Api\TicketController;
+use App\Http\Controllers\Admin\Api\UserController;
+use App\Http\Requests\Api\TicketRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +33,17 @@ Route::post('user/auth/social' ,[ AuthController::class, 'social']);
 Route::post('user/auth/changePassword' ,[ AuthController::class, 'changePassword']);
 Route::post('user/auth/logout' ,[ AuthController::class, 'logout']);
 Route::post('user/auth/deleteAccount' ,[ AuthController::class, 'deleteAccount']);
+Route::post('user/edit/profile' ,[ UserController::class, 'editProfile']);
+Route::post('user/remove/profile/image' ,[ UserController::class, 'removeImage']);
+Route::post('user/social/connect' ,[ UserController::class, 'socialConnect']);
+Route::post('user/remove/social/connect' ,[ UserController::class, 'removeSocial']);
+Route::get('user/social/connect/list/{id}' ,[ UserController::class, 'socialList']);
+Route::post('user/block' ,[ UserController::class, 'block']);
+Route::get('user/block/list/{id}' ,[ UserController::class, 'blockList']);
+Route::post('ticket' ,[ TicketController::class, 'ticket']);
+Route::get('ticket/list/{id}/{status}' ,[ TicketController::class, 'list']);
+Route::get('ticket/close/{ticket_id}' ,[ TicketController::class, 'closeTicket']);
+Route::post('user/message/send' ,[ TicketController::class, 'messageSend']);
+Route::get('user/message/list/{ticket_id}' ,[ TicketController::class, 'messageList']);
+Route::get('category/list' ,[ TicketController::class, 'categoryList']);
+Route::get('faqs' ,[ TicketController::class, 'faqs']);

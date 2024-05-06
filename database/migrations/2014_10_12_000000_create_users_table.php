@@ -21,6 +21,21 @@ return new class extends Migration
             $table->string('timezone')->default('');
             $table->string('platform')->default('');
             $table->string('platform_id')->default('');
+
+            $table->string('profile_image')->default('');
+            $table->string('location')->default('');
+            $table->string('dob')->default('');
+            $table->string('gender')->default('');
+            $table->string('religion')->default('');
+            $table->string('age')->default('');
+            $table->string('bio')->default('');
+            $table->string('lat')->default('');
+            $table->string('lng')->default('');
+            $table->string('language')->default('');
+            $table->string('ethnicity')->default('');
+            $table->string('occupation')->default('');
+            $table->string('education')->default('');
+           
             $table->rememberToken();
             $table->timestamps();
         });

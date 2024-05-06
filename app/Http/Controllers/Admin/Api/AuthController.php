@@ -13,9 +13,12 @@ use App\Http\Requests\Api\Auth\RecoverVerifyRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Http\Requests\Api\Auth\SocialRequest;
 use App\Http\Requests\Api\Auth\VerifyRequest;
+use App\Http\Requests\Api\SocialConnectRequest;
+use Laravel\Sanctum\HasApiTokens;
 use App\Mail\ForgotOtp;
 use App\Mail\OtpSend;
 use App\Models\OtpVerify;
+use App\Models\SocialConnect;
 use App\Models\User;
 use App\Models\UserDevice;
 use Carbon\Carbon;
@@ -70,22 +73,26 @@ class AuthController extends Controller
         $user->email = $request->email;
         $user->timezone = Carbon::now('Asia/Karachi');
         $user->password = Hash::make($request->password);
+    
         $user->save();
-
+    
         $userdevice = new UserDevice();
         $userdevice->user_id = $user->uuid;
-
+    
         $userdevice->device_name = $request->device_name ?? 'No name';
         $userdevice->device_id = $request->device_id ?? 'No ID';
         $userdevice->timezone = $request->timezone ?? 'No Time';
-        $userdevice->token = $request->fcm_token ?? 'No tocken';
+        $userdevice->token = $request->fcm_token ?? 'No token';
         $userdevice->save();
-
+    
+        // $token = $user->createToken('here-token-name')->plainTextToken;
         $new  = User::where('uuid', $user->uuid)->first();
+        // $new->token = $token;
+        
         return response()->json([
             'status' => true,
-            'action' => 'User register successfuly',
-            'data' => $new
+            'action' => 'User registered successfully',
+            'data' => $new,
         ]);
     }
 
@@ -93,6 +100,7 @@ class AuthController extends Controller
     {
         //   return ($request);
         $user = User::Where('email', $request->email)->first();
+        
         // return($user);
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
@@ -289,4 +297,32 @@ class AuthController extends Controller
             ]);
         }
     }
+
+
+    // public function register1(RegisterRequest $request)
+    // {
+    //     $register1 = new User();
+    //     $register1->first_name = $request->first_name;
+    //     $register1->last_name = $request->last_name;
+    //     $register1->email = $request->email;
+    //     $register1->password = Hash::make($request->passowrd);
+    //     $register1->save();
+    //     $new = new UserDevice();
+    //     $new->user_id =  $register1->uuid;
+    //     $new->device_id =  $register1->device_id;
+    //     $new->device_name= $request->device_name;
+    //     $new->timezone= $request->timezone;
+    //     $new->token= $request->fcm_token;
+    //     $new->save();
+    //     $newUser = User::where('uuid', $request->uuid)->first();
+    //     return response()->json([
+    //         'staus' => true,
+    //         'action' => 'User register successfully',
+    //         'data' => $newUser
+
+    //     ]);
+    // }
+
+   
+
 }
