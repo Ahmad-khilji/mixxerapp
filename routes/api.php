@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\Api\AuthController;
-use App\Http\Controllers\Admin\Api\TicketController;
-use App\Http\Controllers\Admin\Api\UserController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Requests\Api\TicketRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +44,6 @@ Route::post('ticket' ,[ TicketController::class, 'ticket']);
 Route::get('ticket/list/{id}/{status}' ,[ TicketController::class, 'list']);
 Route::get('ticket/close/{ticket_id}' ,[ TicketController::class, 'closeTicket']);
 Route::post('user/message/send' ,[ TicketController::class, 'messageSend']);
-Route::get('user/message/list/{ticket_id}' ,[ TicketController::class, 'messageList']);
+Route::get('message/list/{ticket_id}' ,[ TicketController::class, 'messageList']);
 Route::get('category/list' ,[ TicketController::class, 'categoryList']);
 Route::get('faqs' ,[ TicketController::class, 'faqs']);

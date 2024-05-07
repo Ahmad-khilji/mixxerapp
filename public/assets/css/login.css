@@ -1,0 +1,24 @@
+.authentication-wrapper {
+    background: linear-gradient(to bottom, #090C0B, #08423233) !important;
+    /* background-image: url('../img/bg_splash.png') !important;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: auto; */
+}
+
+.image img{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 60%;
+        height: auto;
+        margin-bottom: 40px;
+}
+/* .w-px-400{
+    background-color: #ffffff;
+    border-radius: 1.5rem
+} */
+
+

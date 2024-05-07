@@ -29,7 +29,7 @@ class VerifyEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Ta Marketing',
+            subject: 'Mixxer',
         );
     }
 
@@ -52,8 +52,8 @@ class VerifyEmail extends Mailable
 
     public function build()
     {
-        return $this->from('support@taMarketing.co', 'Ta Marketing')
-            ->subject('Ta Marketing')
+        return $this->from('support@taMarketing.co', 'Mixxer')
+            ->subject('Mixxer')
             ->view('verifyEmail')
             ->with('mailDetails', $this->mailDetails['body']);
     }

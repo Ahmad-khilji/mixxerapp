@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Admin\AdminController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +17,19 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(function () {
+    Route::get('/', [AdminController::class, 'index']);
+
+
+
+    Route::prefix('user')->name('user-')->group(function () {
+        Route::get('/', [AdminController::class, 'list']);
+       
+    });
+
+});
+
+
+require __DIR__.'/auth.php';
