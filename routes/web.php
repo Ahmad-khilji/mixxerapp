@@ -29,6 +29,12 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(func
        
     });
 
+
+    Route::prefix('ticket')->name('ticket-')->group(function () {
+        Route::get('/', [AdminController::class, 'ticket']);
+
+    });
+
 });
 
 

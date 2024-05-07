@@ -18,10 +18,6 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
-
-
-
-
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Dashboard</span>
         </li>
@@ -31,22 +27,31 @@
                 <div data-i18n="Statistics">Statistics</div>
             </a>
         </li>
-
-
-        <!-- Apps & Pages -->
+    
+        <!-- User Management -->
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">User Managements</span>
+            <span class="menu-header-text">User Management</span>
         </li>
-
-        <li
-            class="menu-item {{ Request::url() == route('dashboard-user-') ? 'active' : '' }} }}">
+        <li class="menu-item {{ Request::url() == route('dashboard-user-') ? 'active' : '' }}">
             <a href="{{ route('dashboard-user-') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-circle"></i>
                 <div data-i18n="Contact Us Categories">User</div>
             </a>
         </li>
+    
+        <!-- Help & Supports -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Help & Supports</span>
+        </li>
+        <li class="menu-item {{ Request::url() == route('dashboard-ticket-') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-ticket-') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
+                <div data-i18n="Contact Us Categories">Active Ticket</div>
+            </a>
+        </li>
+        
 
-       
-
+        
     </ul>
+    
 </aside>
