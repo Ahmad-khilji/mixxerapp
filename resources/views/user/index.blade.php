@@ -22,9 +22,10 @@
                         <table class="table border-top dataTable" id="usersTable">
                             <thead>
                                 <tr>           
-                                    <th>Name</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
                                     <th>Email</th>
-                                    {{-- <th>Actions</th> --}}
+                                    
                                 </tr>
 
                             </thead>
@@ -33,8 +34,9 @@
                                     
                                 <tr>
                                   <td>{{$item->first_name}}</td>
+                                  <td>{{$item->last_name}}</td>
                                   <td>{{$item->email}}</td>
-                                  {{-- <td>{{$item->email}}</td> --}}
+                                 
                                 </tr>
                            @endforeach
                         </table>

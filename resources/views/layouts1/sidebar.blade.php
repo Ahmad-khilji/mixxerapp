@@ -2,7 +2,8 @@
     <div class="app-brand demo">
         <a class="app-brand-link">
 
-            <span class="app-brand-text demo menu-text fw-bold"><img src="/assets/img/mixxer_logo.png" alt="" style="width: 50% !important"></span>
+            <span class="app-brand-text demo menu-text fw-bold"><img src="/assets/img/mixxer_logo.png" alt=""
+                    style="width: 50% !important"></span>
         </a>
 
         {{-- <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -27,7 +28,7 @@
                 <div data-i18n="Statistics">Statistics</div>
             </a>
         </li>
-    
+
         <!-- User Management -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">User Management</span>
@@ -35,23 +36,41 @@
         <li class="menu-item {{ Request::url() == route('dashboard-user-') ? 'active' : '' }}">
             <a href="{{ route('dashboard-user-') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-circle"></i>
-                <div data-i18n="Contact Us Categories">User</div>
+                <div data-i18n="Contact Us Categories">User List</div>
             </a>
         </li>
-    
-        <!-- Help & Supports -->
+       
+
+        {{-- ticket --}}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Help & Supports</span>
         </li>
-        <li class="menu-item {{ Request::url() == route('dashboard-ticket-') ? 'active' : '' }}">
-            <a href="{{ route('dashboard-ticket-') }}" class="menu-link">
+        <li
+            class="menu-item {{ Request::url() == route('dashboard-ticket-ticket', 'active') ? 'active' : '' }} || {{ Str::contains(Request::url(), 'dashboard/ticket/active/messages') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-ticket-ticket', 'active') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-circle"></i>
-                <div data-i18n="Contact Us Categories">Active Ticket</div>
+                <div> Active Tickets </div>
+
             </a>
         </li>
-        
+        <li
+            class="menu-item {{ Request::url() == route('dashboard-ticket-ticket', 'close') ? 'active' : '' }} || {{ Str::contains(Request::url(), 'dashboard/ticket/close/messages') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-ticket-ticket', 'close') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
 
-        
+                <div>Close Tickets</div>
+            </a>
+        </li>
+
+
+ {{-- faqs --}}
+ <li class="menu-item {{ Request::url() == route('dashboard-faqs-') ? 'active' : '' }}">
+    <a href="{{ route('dashboard-faqs-') }}" class="menu-link">
+        <i class="menu-icon tf-icons ti ti-circle"></i>
+        <div data-i18n="FAQ'S">FAQ'S</div>
+    </a>
+</li>
+
     </ul>
-    
+
 </aside>

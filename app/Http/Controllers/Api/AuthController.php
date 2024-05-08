@@ -120,13 +120,13 @@ class AuthController extends Controller
             } else {
                 return response()->json([
                     'status' => false,
-                    'action' => 'Password invalid, Please enter correct Password',
+                    'action' => 'Password is invalid, Please enter correct Password',
                 ]);
             }
         }
         return response()->json([
             'status' => false,
-            'action' => "Account not found",
+            'action' => "No account found against this email",
 
         ]);
     }
@@ -149,7 +149,7 @@ class AuthController extends Controller
             Mail::to($request->email)->send(new ForgotOtp($mailDetails));
             return response()->json([
                 'status' => true,
-                'action' => 'Otp send successfully',
+                'action' => 'Otp sent for verification',
             ]);
         } else {
             return response()->json([
@@ -168,18 +168,14 @@ class AuthController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'status' => false,
-                    'action' => "New password is same as old password",
+                    'action' => "New password should not be same as old password",
                 ]);
-            } else {
+            }else{
                 return response()->json([
                     'status' => true,
-                    'action' => "Current password is updated",
+                    'action' => "Current password is updated"
                 ]);
             }
-            return response()->json([
-                'status' => true,
-                'action' => "Current password is updated"
-            ]);
         } else {
             return response()->json([
                 'status' => false,
@@ -215,14 +211,14 @@ class AuthController extends Controller
             $userdevice->device_name = $request->device_name ?? 'No name';
             $userdevice->device_id = $request->device_id ?? 'No ID';
             $userdevice->timezone = $request->timezone ?? 'No Time';
-            $userdevice->token = $request->fcm_token ?? 'No tocken';
+            $userdevice->token = $request->fcm_token ?? 'No token';
             $userdevice->save();
 
             $newuser  = User::where('uuid', $user->uuid)->first();
 
             return response()->json([
                 'status' => true,
-                'action' => 'User register successfully',
+                'action' => 'User registered successfully',
                 'data' => $newuser
             ]);
         }

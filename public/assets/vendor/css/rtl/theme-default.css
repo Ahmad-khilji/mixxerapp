@@ -97,9 +97,17 @@ body {
 }
 
 .bg-body {
-  background: #000000 !important;
+  background: #EEEAE5 !important;
 }
-
+.ti-dots-vertical:hover{
+color: #000000 !important;
+}
+.light-style .app-chat .app-chat-history .chat-history-header{
+  background-color: #7e6c54 !important;
+}
+.light-style .app-chat .app-chat-history .chat-history-footer{
+  background-color: #7e6c54 !important;
+}
 .text-primary {
   color: #7e6c54 !important;
 }
@@ -361,7 +369,8 @@ button.list-group-item-primary.active {
 
 .btn-primary {
   color: #ffffff;
-  background-color: #7e6c54;
+  border: 1px solid #EEEAE5 !important;
+  /* background-color: #7e6c54; */
   border-color: #ffffff;
 }
 
@@ -376,7 +385,7 @@ button.list-group-item-primary.active {
 .btn-primary.focus {
   color: #fff;
   background-color: #7e6c54;
-  border-color: #ffffff;
+  border: 1px solid white;
   box-shadow: none;
 }
 

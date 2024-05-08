@@ -2307,7 +2307,7 @@ progress {
   font-weight: 400;
   line-height: 1.5;
   color: black;
-  background-color: white;
+  background-color: #dbdade !important;
   background-clip: padding-box;
   border: 1px solid #dbdade;
   appearance: none;
@@ -4462,7 +4462,7 @@ fieldset:disabled .btn {
   font-size: 0.9375rem;
   color: #ffffff;
   text-align: left;
-  background-color: #000000;
+  background-color: #7e6c54;
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
@@ -4477,13 +4477,16 @@ fieldset:disabled .btn {
 
 .accordion-button:not(.collapsed) {
   color: #ffffff;
-  background-color: #000000;
+  background-color: #7e6c54;
   box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
 }
-
+.button.accordion-button.collapsed::after{
+  color: white !important;
+}
 .accordion-button:not(.collapsed)::after {
   background-image: var(--bs-accordion-btn-active-icon);
   transform: var(--bs-accordion-btn-icon-transform);
+  filter: brightness(0) grayscale(100%);
 }
 
 .accordion-button::after {
@@ -4492,6 +4495,8 @@ fieldset:disabled .btn {
   height: var(--bs-accordion-btn-icon-width);
   margin-left: auto;
   content: "";
+  filter: brightness(0) invert(1) !important;
+  color: white !important;
   background-image: var(--bs-accordion-btn-icon);
   background-repeat: no-repeat;
   background-size: var(--bs-accordion-btn-icon-width);
@@ -5313,7 +5318,7 @@ fieldset:disabled .btn {
   width: 100%;
   color: var(--bs-modal-color);
   pointer-events: auto;
-  background-color: var(--bs-modal-bg);
+  background-color: #7e6c54;
   background-clip: padding-box;
   border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
   border-radius: var(--bs-modal-border-radius);
@@ -7668,8 +7673,8 @@ label.btn {
 }
 
 .btn-secondary {
-  color: #fff;
-  background-color: #a8aaae;
+  color: black !important;
+  background-color: #EEEAE5;
   border-color: #a8aaae;
 }
 
@@ -11155,6 +11160,7 @@ html:not([dir=rtl]) .nav-align-left .nav-tabs {
 .col-form-label {
   text-transform: inherit;
   letter-spacing: inherit;
+  color: white !important;
 }
 
 .form-label-lg {

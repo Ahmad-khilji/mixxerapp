@@ -18,109 +18,66 @@ class UserController extends Controller
 
     public function editProfile(EditProfileRequest $request)
     {
-        // return ($request);
         $user = User::find($request->user_id);
-        if ($user) {
-
-            if ($request->has('email')) {
-                if (User::where('email', $request->email)->where('uuid', '!=', $request->user_id)->exists()) {
-                    return response()->json([
-                        'status' => false,
-                        'action' => 'Email Address is already registered'
-                    ]);
-                } else {
-                    $user->email = $request->email;
-                }
-            }
-
-
-            $updateRecord = User::find($request->user_id);
-
-            if (!$updateRecord) {
-                return response()->json([
-                    'status' => false,
-                    'action' => 'User not found',
-                ]);
-            }
-            if ($request->hasFile('profile_image')) {
-                $file = $request->file('profile_image');
-                $extension = $file->getClientOriginalExtension();
-                $mime = explode('/', $file->getClientMimeType());
-                $filename = time() . '-' . uniqid() . '.' . $extension;
-                if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename))
-                    $path = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
-                $user->profile_image = $path;
-            }
-            $updateRecord->profile_image = $user->profile_image;
-            $updateRecord->email = $request->email;
-            $updateRecord->first_name = $request->first_name;
-            $updateRecord->last_name = $request->last_name;
-
-            if ($request->location) {
-                $updateRecord->location = $request->location;
-                $updateRecord->lat = $request->lat;
-                $updateRecord->lng = $request->lng;
-            } else {
-                $updateRecord->location = '';
-                $updateRecord->lat = '';
-                $updateRecord->lng = '';
-            }
-
-            if ($request->dob) {
-                $updateRecord->dob = $request->dob;
-            } else {
-                $updateRecord->dob = '';
-            }
-            if ($request->gender) {
-                $updateRecord->gender = $request->gender;
-            } else {
-                $updateRecord->gender = '';
-            }
-            if ($request->bio) {
-                $updateRecord->bio = $request->bio;
-            } else {
-                $updateRecord->bio = '';
-            }
-            if ($request->age) {
-                $updateRecord->age = $request->age;
-            } else {
-                $updateRecord->bio = '';
-            }
-            if ($request->education) {
-                $updateRecord->education = $request->education;
-            } else {
-                $updateRecord->education = '';
-            }
-            if ($request->religion) {
-                $updateRecord->religion = $request->religion;
-            } else {
-                $updateRecord->religion = '';
-            }
-
-            if ($request->occupation) {
-                $updateRecord->occupation = $request->occupation;
-            } else {
-                $updateRecord->occupation = '';
-            }
-            if ($request->language) {
-                $updateRecord->language = $request->language;
-            } else {
-                $updateRecord->language = '';
-            }
-            if ($request->ethnicity) {
-                $updateRecord->ethnicity = $request->ethnicity;
-            } else {
-                $updateRecord->ethnicity = '';
-            }
-            $updateRecord->update();
-
+        if (!$user) {
             return response()->json([
-                'status' => true,
-                'action' => 'Profile updated successfully',
-                'data' =>  $updateRecord,
+                'status' => false,
+                'action' => 'User not found',
             ]);
         }
+    
+        if ($request->has('email')) {
+            if (User::where('email', $request->email)->where('uuid', '!=', $request->user_id)->exists()) {
+                return response()->json([
+                    'status' => false,
+                    'action' => 'Email Address is already registered'
+                ]);
+            } else {
+                $user->email = $request->email;
+            }
+        }
+    
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '-' . uniqid() . '.' . $extension;
+            if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename)) {
+                $user->profile_image = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
+            }
+        }
+    
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->dob = $request->dob;
+        $user->gender = $request->gender;
+        $user->bio = $request->bio;
+        $user->age = $request->age;
+        $user->education = $request->education;
+        $user->religion = $request->religion;
+        $user->occupation = $request->occupation;
+        $user->language = $request->language;
+        $user->ethnicity = $request->ethnicity;
+    
+        if ($request->location) {
+            $user->location = $request->location;
+            $user->lat = $request->lat;
+            $user->lng = $request->lng;
+        } else {
+            $user->location = '';
+            $user->lat = '';
+            $user->lng = '';
+        }
+    
+        // Save the updated user profile
+        $user->save();
+    
+        return response()->json([
+            'status' => true,
+            'action' => 'Profile updated successfully',
+            'data' =>  $user,
+        ]);
     }
+    
 
 
     public function removeImage(Request $request)

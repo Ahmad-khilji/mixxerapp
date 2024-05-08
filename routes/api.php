@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Requests\Api\TicketRequest;
@@ -47,3 +49,7 @@ Route::post('user/message/send' ,[ TicketController::class, 'messageSend']);
 Route::get('message/list/{ticket_id}' ,[ TicketController::class, 'messageList']);
 Route::get('category/list' ,[ TicketController::class, 'categoryList']);
 Route::get('faqs' ,[ TicketController::class, 'faqs']);
+Route::post('add/report', [ReportController::class, 'report']);
+Route::post('create/post' ,[ PostController::class, 'createPost']);
+Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost']);
+Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
