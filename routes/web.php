@@ -1,5 +1,7 @@
 <?php
+
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminTicketController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,14 +26,8 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(func
 
     Route::prefix('user')->name('user-')->group(function () {
         Route::get('/', [AdminController::class, 'list']);
-       
     });
 
-
-    // Route::prefix('ticket')->name('ticket-')->group(function () {
-    //     Route::get('/', [AdminController::class, 'ticket']);
-
-    // });
 
     Route::prefix('faqs')->name('faqs-')->group(function () {
         Route::get('/', [AdminController::class, 'faqs']);
@@ -47,7 +43,12 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(func
         Route::post('send-message', [AdminTicketController::class, 'sendMessage'])->name('send-message');
     });
 
+
+    Route::prefix('report')->name('report-')->group(function () {
+        Route::get('/{type}', [AdminReportController::class, 'report']);
+        
+    });
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

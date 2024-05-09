@@ -162,7 +162,7 @@
 
                         <div class="mb-3">
 
-                            <label for="email" class="form-label">Email Address</label>
+                            <label for="email" class="form-label " id="label">Email Address</label>
 
                             <input type="text" class="form-control" id="email" value="{{ old('email') }}"
                                 name="email" placeholder="Enter your email" />
@@ -170,7 +170,7 @@
 
                         <div class="mb-4 form-password-toggle">
 
-                            <label for="email" class="form-label">Password</label>
+                            <label for="email" class="form-label" id="label">Password</label>
 
 
 

@@ -102,7 +102,7 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'action' => "User not found"
+                'action' => "No user found against this userId"
             ]);
         }
     }
@@ -116,7 +116,7 @@ public function socialConnect(SocialConnectRequest $request)
     if ($existingSocial) {
         return response()->json([
             'status' => false,
-            'action' => 'UserId and Platform Already Exist',
+            'action' => 'UserId and platform already exist',
         ]);
     } else {
 
@@ -179,7 +179,7 @@ public function removeSocial(RemoveSocialRequest $request)
 
             return response()->json([
                 'status' => false,
-                'action' => 'User Unblocked ',
+                'action' => 'User Unblocked successfully',
             ]);
         } else {
 
@@ -190,7 +190,7 @@ public function removeSocial(RemoveSocialRequest $request)
 
             return response()->json([
                 'status' => true,
-                'action' => 'User Blocked ',
+                'action' => 'User Blocked successfully',
 
 
             ]);
@@ -207,7 +207,7 @@ public function removeSocial(RemoveSocialRequest $request)
         }
         return response()->json([
             'status' => true,
-            'action' => 'Blocked list',
+            'action' => 'Block listed',
             'data' => $user,
         ]);
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PostRequest;
 use App\Models\Post;
-
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -81,7 +81,7 @@ class PostController extends Controller
         $addPost->save();
         return response()->json([
             'status' => true,
-            'action' =>  'Post Create',
+            'action' =>  'Post created successfully',
             'data' => $addPost
         ]);
     }
@@ -107,7 +107,7 @@ class PostController extends Controller
     
            
             $uploadImages = explode(',', $post->upload_images);
-            foreach ($uploadImages as $uploadImage) {
+               foreach ($uploadImages as $uploadImage) {
                 $uploadImagePath = public_path($uploadImage);
                 if (file_exists($uploadImagePath)) {
                     unlink($uploadImagePath);
@@ -126,10 +126,29 @@ class PostController extends Controller
     
         return response()->json([
             'status' => false,
-            'action' => "No post found",
+            'action' => "No post found against this postId",
         ]);
     }
     
+
+
+    public function postDetail($post_id, $user_id)
+    {
+        $post = Post::where('id',$post_id)->where('user_id',$user_id)->first();
+        if ($post) {
+            
+        return response()->json([
+                    'status' => true,
+                    'action' =>  "Post detail",
+                    'data' => $post
+                ]);
+        }
+        return response()->json([
+            'status' => false,
+            'action' =>  "No post found against this Id",
+        ]);
+    }
+
 
 
 }

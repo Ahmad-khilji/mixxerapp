@@ -14,7 +14,7 @@ class ReportController extends Controller
           $report = new Report();
         $report->user_id= $request->user_id;
  $report->type = $request->type;
-        $report->reported_id = $request->reported_id;
+        $report->report_id = $request->report_id;
              $report->message = $request->message;
         $report->save();
 

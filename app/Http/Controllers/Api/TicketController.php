@@ -73,7 +73,7 @@ public function closeTicket($ticket_id)
         } else {
             return response()->json([
                 'status' => false,
-                'action' => "Tickets not found",
+                'action' => "Tickets not found againt this ticketId",
             ]);
         }
     }

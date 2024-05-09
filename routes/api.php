@@ -53,3 +53,4 @@ Route::post('add/report', [ReportController::class, 'report']);
 Route::post('create/post' ,[ PostController::class, 'createPost']);
 Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost']);
 Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
+Route::get('post/detail/{post_id}/{user_id}', [PostController::class, 'postDetail']);

@@ -25,7 +25,7 @@ class ReportRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,uuid',
             'type' => 'required',
-            'reported_id' => 'required',
+            'report_id' => 'required',
             'message' => 'required',
         ];
     }

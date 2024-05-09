@@ -11155,7 +11155,9 @@ html:not([dir=rtl]) .nav-align-left .nav-tabs {
   border-width: 0.5rem 0.5rem 0.5rem 0;
   border-right-color: #fff;
 }
-
+#label{
+  color: #7e6c54 !important;
+}
 .form-label,
 .col-form-label {
   text-transform: inherit;

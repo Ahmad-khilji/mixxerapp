@@ -39,7 +39,7 @@
                 <div data-i18n="Contact Us Categories">User List</div>
             </a>
         </li>
-       
+
 
         {{-- ticket --}}
         <li class="menu-header small text-uppercase">
@@ -63,13 +63,34 @@
         </li>
 
 
- {{-- faqs --}}
- <li class="menu-item {{ Request::url() == route('dashboard-faqs-') ? 'active' : '' }}">
-    <a href="{{ route('dashboard-faqs-') }}" class="menu-link">
-        <i class="menu-icon tf-icons ti ti-circle"></i>
-        <div data-i18n="FAQ'S">FAQ'S</div>
-    </a>
-</li>
+        {{-- faqs --}}
+        <li class="menu-item {{ Request::url() == route('dashboard-faqs-') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-faqs-') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
+                <div data-i18n="FAQ'S">FAQ'S</div>
+            </a>
+        </li>
+
+        {{-- reports --}}
+
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text"> Reported Requests</span>
+        </li>
+        <li class="menu-item {{ Request::url() == route('dashboard-report-', 'user') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-report-', 'user') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
+                <div data-i18n="User">Reported Accounts</div>
+
+            </a>
+        </li>
+        <li class="menu-item {{ Request::url() == route('dashboard-report-', 'post') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-report-', 'post') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
+                <div data-i18n="User">Reported Posts</div>
+
+            </a>
+        </li>
+
 
     </ul>
 
