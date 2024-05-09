@@ -170,7 +170,12 @@ class AuthController extends Controller
                     'status' => false,
                     'action' => "New password should not be same as old password",
                 ]);
-            }else{
+            }
+            
+            else {
+                $user->update([
+                    'password' => Hash::make($request->new_password)
+                ]);
                 return response()->json([
                     'status' => true,
                     'action' => "Current password is updated"

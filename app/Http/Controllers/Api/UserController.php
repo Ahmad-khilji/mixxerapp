@@ -111,7 +111,7 @@ public function socialConnect(SocialConnectRequest $request)
     if ($existingSocial) {
         return response()->json([
             'status' => false,
-            'action' => 'Already exist',
+            'action' => 'UserId and Platform Already Exist',
         ]);
     } else {
 
@@ -123,7 +123,7 @@ public function socialConnect(SocialConnectRequest $request)
         $socaial->save();
         return response()->json([
             'status' => true,
-            'action' => 'Social account connect',
+            'action' => 'Social account connected',
 
         ]);
     }
@@ -138,12 +138,12 @@ public function removeSocial(RemoveSocialRequest $request)
             $existingSocial->delete();
             return response()->json([
                 'status' => true,
-                'action' => 'Remove social connect',
+                'action' => 'Remove social connected',
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'Platform not found',
+                'action' => 'UserId and Platform not found',
             ]);
         }
     }
@@ -154,7 +154,7 @@ public function removeSocial(RemoveSocialRequest $request)
         $social = SocialConnect::where('user_id', $user_id)->get();
         return response()->json([
             'status' => true,
-            'action' => 'Social list',
+            'action' => 'Social listed',
             'data' => $social,
         ]);
     }
@@ -174,7 +174,7 @@ public function removeSocial(RemoveSocialRequest $request)
 
             return response()->json([
                 'status' => false,
-                'action' => 'Unblock ',
+                'action' => 'User Unblocked ',
             ]);
         } else {
 
@@ -185,7 +185,7 @@ public function removeSocial(RemoveSocialRequest $request)
 
             return response()->json([
                 'status' => true,
-                'action' => 'Block ',
+                'action' => 'User Blocked ',
 
 
             ]);

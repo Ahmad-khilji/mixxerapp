@@ -20,7 +20,7 @@ class ReportController extends Controller
 
         return response()->json([
             'status' => true,
-            'action' =>  'Report add',
+            'action' =>  'Report added',
         ]);
     }
 }

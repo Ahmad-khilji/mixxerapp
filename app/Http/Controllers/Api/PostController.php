@@ -89,42 +89,7 @@ class PostController extends Controller
     }
 
 
-    public function savePost($post_id, $user_id)
-    {
-        $post =Post::find($post_id);
-              $user = User::find($user_id);
-        if ($user) {
-            if ($post) {
-                $check = SavedPost::where('post_id', $post_id)->where('user_id', $user_id)->first();
-
-                         if ($check) {
-              $check->delete();
-                    return response()->json([
-                        'status' => true,
-                        'action' =>  'Post unsaved',
-                    ]);
-                }
-
-          $save  = new SavedPost();
-                $save->post_id = $post_id;
-                   $save->user_id = $user_id;
-                $save->save();
-
-      return response()->json([
-                    'status' => true,
-                    'action' =>  'Post saved',
-                ]);
-            }
-            return response()->json([
-                'status' => false,
-                'action' =>  'Post not found',
-            ]);
-        }
-        return response()->json([
-            'status' => false,
-            'action' =>  'User not found',
-        ]);
-    }
+    
 
 
     public function delete($post_id)
