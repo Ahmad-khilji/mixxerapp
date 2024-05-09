@@ -35,8 +35,6 @@ class AdminTicketController extends Controller
 
     public function messages($status,$ticket_id)
     {
-        
-
                 $messages= Message::where('ticket_id', $ticket_id)
             ->orderBy('created_at', 'asc')
             ->get();

@@ -70,7 +70,7 @@
                             <div class="chat-history-body bg-body" id="chat-history-body">
                                 <ul class="list-unstyled chat-history" id="list-unstyled">
                                     @foreach ($messages as $message)
-                                        @if ($message->sendBy == '')
+                                        @if ($message->sendBy == 'admin')
                                             <!-- Sent Messages -->
                                             <li class="chat-message chat-message-right">
                                                 <div class="d-flex overflow-hidden">
@@ -96,9 +96,15 @@
                                                 <div class="d-flex overflow-hidden">
                                                     <div class="user-avatar flex-shrink-0 me-3">
                                                         <div class="avatar avatar-sm">
-                                                            <img src="{{ $user->profile_image != '' ? $user->profile_image : asset('placeholder.png') }}"
-                                                                alt="Avatar" class="rounded-circle" />
+                                                            @if ($user->profile_image)
+                                                                <img src="{{ $user->profile_image }}" alt="Avatar" class="rounded-circle" />
+                                                            @else
+                                                                <div class="avatar-initials rounded-circle bg-primary text-white">
+                                                                    {{ strtoupper(substr($user->first_name, 0, 1)) }}{{ strtoupper(substr($user->last_name, 0, 1)) }}
+                                                                </div>
+                                                            @endif
                                                         </div>
+                                                        
                                                     </div>
                                                     <div class="chat-message-wrapper flex-grow-1">
                                                         <div class="chat-message-text">

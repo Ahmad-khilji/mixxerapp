@@ -71,7 +71,6 @@ class AuthController extends Controller
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
-        $user->timezone = Carbon::now('Asia/Karachi');
         $user->password = Hash::make($request->password);
     
         $user->save();
