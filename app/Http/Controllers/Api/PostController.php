@@ -94,21 +94,44 @@ class PostController extends Controller
 
     public function delete($post_id)
     {
-       
         $post = Post::find($post_id);
-
+    
         if ($post) {
+            $coverImages = explode(',', $post->cover_image);
+           
+            foreach ($coverImages as $coverImage) {
+                $coverImagePath = public_path($coverImage);
+                if (file_exists($coverImagePath)) {
+                    unlink($coverImagePath);
+                }
+                // return ($coverImagePath);
+            }
+    
+           
+            $uploadImages = explode(',', $post->upload_images);
+            foreach ($uploadImages as $uploadImage) {
+                $uploadImagePath = public_path($uploadImage);
+                if (file_exists($uploadImagePath)) {
+                    unlink($uploadImagePath);
+                }
+                // return ($uploadImagePath);
+            }
+    
+        
             $post->delete();
-    return response()->json([
+    
+            return response()->json([
                 'status' => true,
-                'action' =>  "Post deleted",
+                'action' => "Post deleted",
             ]);
         }
+    
         return response()->json([
             'status' => false,
-            'action' =>  "No post found",
+            'action' => "No post found",
         ]);
     }
+    
 
 
 }

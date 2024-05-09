@@ -81,27 +81,32 @@ class UserController extends Controller
 
 
     public function removeImage(Request $request)
-{
-    $user_id = $request->user_id;
-
-    $user = User::find($user_id);
-
-    if ($user) {
-        $user->profile_image = '';
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'action' => "Profile image removed",
-            'data' => $user
-        ]);
-    } else {
-        return response()->json([
-            'status' => false,
-            'action' => "User not found"
-        ]);
+    {
+        $user_id = $request->user_id;
+    
+        $user = User::find($user_id);
+    
+        if ($user) {
+            $profileImagePath = public_path($user->profile_image);
+            if (file_exists($profileImagePath)) {
+                unlink($profileImagePath);
+            }
+            $user->profile_image = '';
+            $user->save();
+    
+            return response()->json([
+                'status' => true,
+                'action' => "Profile image removed",
+                'data' => $user
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => "User not found"
+            ]);
+        }
     }
-}
+    
 
 
 public function socialConnect(SocialConnectRequest $request)
