@@ -12,21 +12,18 @@ class AdminReportController extends Controller
 {
     public function report($type)
     {
-        
+
         if ($type == 'user') {
-
-               $reports = Report::where('type', 'user')->get();
+            $reports = Report::where('type', 'user')->get();
             foreach ($reports as $item) {
-
-                    $user = User::find($item->user_id);
-
-         $reported_user = User::find($item->report_id);
+                $user = User::find($item->user_id);
+                $reported_user = User::find($item->report_id);
+                // dd($reported_user);
                 $item->user = $user;
-                // dd( $item->user);
+                // dd($item->user);
                 $item->reported_user = $reported_user;
-
+                // dd($item->reported_user);
             }
-// dd($reports);
             return view('report.user', compact('reports'));
         }
 
@@ -35,26 +32,51 @@ class AdminReportController extends Controller
 
         if ($type == 'post') {
 
-              $reports = Report::where('type', 'post')->get();
+            $reports = Report::where('type', 'post')->get();
 
             foreach ($reports as $item) {
-
-                $reported_post = User::find($item->user_id);
-                // dd($reported_post);
-                    $item->user= $reported_post;
-
+                $user = User::find($item->user_id);
+                $item->user = $user;
                 $post = Post::where('user_id', $item->report_id)->first();
-    //    dd($post);
+                // dd($post);
                 $item->post = $post;
                 // dd($item->post);
-                 $item->reported_post = $reported_post;
-                //  dd($item->reported_post);
+                // dd($item->post);
             }
-            // dd($reports);
+
             return view('report.post', compact('reports'));
         }
 
-    
+       
+    }
+
+    public function deleteReport($id)
+    {
+        $find = Report::find($id);
+        $find->delete();
+        return redirect()->back();
+    }
+
+    public function deleteUser($user_id, $report_id)
+    {
+        $find = User::find($user_id);
+        Report::where('type', 'user')->where('report_id', $user_id)->delete();
+        $find->delete();
+        return redirect()->back();
+    }
+
+
+
+    public function deletePost($user_id, $report_id)
+{
+    $post = Post::where('user_id', $user_id)->first();
+    Report::where('type', 'post')->where('report_id', $user_id)->delete();
+    $post->delete();
+
+    return redirect()->back();
 }
-    
-}
+
+
+   
+    }
+

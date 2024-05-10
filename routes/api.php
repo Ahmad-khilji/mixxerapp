@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GroupChatController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TicketController;
@@ -54,3 +55,6 @@ Route::post('create/post' ,[ PostController::class, 'createPost']);
 Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost']);
 Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
 Route::get('post/detail/{post_id}/{user_id}', [PostController::class, 'postDetail']);
+Route::post('create/group/{user_id}', [GroupChatController::class, 'createGroup']);
+Route::post('message/send/group', [GroupChatController::class, 'sendMessagegGroup']);
+Route::get('group/message/list/{group_id}', [GroupChatController::class, 'messageList']);

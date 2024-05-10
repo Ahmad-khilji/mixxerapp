@@ -41,8 +41,8 @@ class UserController extends Controller
             $file = $request->file('profile_image');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename)) {
-                $user->profile_image = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
+            if ($file->move('profiles/user/' . $request->user_id . '/profile/', $filename)) {
+                $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
             }
         }
     

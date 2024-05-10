@@ -46,6 +46,10 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(func
 
     Route::prefix('report')->name('report-')->group(function () {
         Route::get('/{type}', [AdminReportController::class, 'report']);
+        Route::get('delete/{id}', [AdminReportController::class, 'deleteReport'])->name('delete-report');
+        Route::get('user/delete/{user_id}/{report_id}', [AdminReportController::class, 'deleteUser'])->name('delete-user');
+        Route::get('post/delete/{user_id}/{report_id}', [AdminReportController::class, 'deletePost'])->name('delete-post');
+
         
     });
 });
