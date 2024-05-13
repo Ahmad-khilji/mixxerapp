@@ -56,5 +56,5 @@ Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost'])
 Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
 Route::get('post/detail/{post_id}/{user_id}', [PostController::class, 'postDetail']);
 Route::post('create/group/{user_id}', [GroupChatController::class, 'createGroup']);
-Route::post('message/send/group', [GroupChatController::class, 'sendMessagegGroup']);
+Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
 Route::get('group/message/list/{group_id}', [GroupChatController::class, 'messageList']);

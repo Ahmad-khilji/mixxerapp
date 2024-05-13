@@ -12,7 +12,7 @@
 
     <meta name="description" content="" />
     <!-- Favicon -->
-    <link rel="icon"  href="/assets/img/favicon/favicon.ico" type="image/x-icon" />
+    <link rel="icon"  href="/assets/img/favicon/mixxer_logo.png" type="image/x-icon" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

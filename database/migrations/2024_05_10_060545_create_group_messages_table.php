@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->references('uuid')->on('users')->onDelete('cascade');
             $table->string('group_id');
             $table->string('message');
+            $table->string('image')->default('');
             $table->timestamps();
         });
     }

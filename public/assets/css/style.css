@@ -316,7 +316,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .layout-menu .brandborder {
-    background-color: #ffffff;
+    background: #7e6c54;
     height: 1px;
     opacity: 30%;
 }
