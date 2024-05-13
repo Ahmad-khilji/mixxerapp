@@ -22,7 +22,7 @@ class GroupChatController extends Controller
 
       $create->first_name = $user->first_name;
             $create->save();
-// dd( $user);
+// return( $user);
             return response()->json([
                 'status' => true,
                   'action' => 'Group created successfully',
@@ -42,7 +42,8 @@ class GroupChatController extends Controller
     
     if ($group) {
         $message = new GroupMessage();
-        $message->group_id = $request->group_id;
+
+            $message->group_id = $request->group_id;
         $message->user_id = $request->user_id;
         $message->message = $request->message;
 
@@ -57,7 +58,7 @@ class GroupChatController extends Controller
         }
 
         $message->save();
-
+// return($message);
         return response()->json([
             'status' => true,
             'action' => 'Message sent successfully',
@@ -76,7 +77,7 @@ class GroupChatController extends Controller
     public function messageList($group_id)
     {
         $messageList =  GroupMessage::where('group_id', $group_id)->get();
-        // dd( $messageList );
+        // return( $messageList );
         if($messageList){
             return response()->json([
                 'status' => true,

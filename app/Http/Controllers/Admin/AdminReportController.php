@@ -17,10 +17,11 @@ class AdminReportController extends Controller
             $reports = Report::where('type', 'user')->get();
             foreach ($reports as $item) {
                 $user = User::find($item->user_id);
-                $reported_user = User::find($item->report_id);
-                // dd($reported_user);
                 $item->user = $user;
                 // dd($item->user);
+                $reported_user = User::find($item->report_id);
+                // dd($reported_user);
+               
                 $item->reported_user = $reported_user;
                 // dd($item->reported_user);
             }
@@ -41,7 +42,7 @@ class AdminReportController extends Controller
                 // dd($post);
                 $item->post = $post;
                 // dd($item->post);
-                // dd($item->post);
+               
             }
 
             return view('report.post', compact('reports'));
@@ -57,7 +58,7 @@ class AdminReportController extends Controller
         return redirect()->back();
     }
 
-    public function deleteUser($user_id, $report_id)
+    public function deleteUser($user_id)
     {
         $find = User::find($user_id);
         Report::where('type', 'user')->where('report_id', $user_id)->delete();
@@ -67,7 +68,7 @@ class AdminReportController extends Controller
 
 
 
-    public function deletePost($user_id, $report_id)
+    public function deletePost($user_id)
 {
     $post = Post::where('user_id', $user_id)->first();
     Report::where('type', 'post')->where('report_id', $user_id)->delete();

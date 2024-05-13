@@ -9,7 +9,7 @@ use App\Http\Requests\Api\RemoveSocialRequest;
 use App\Http\Requests\Api\SocialConnectRequest;
 use App\Models\Block;
 use App\Models\SocialConnect;
-use Dotenv\Validator;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 
