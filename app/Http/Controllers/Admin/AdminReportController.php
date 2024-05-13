@@ -36,6 +36,7 @@ class AdminReportController extends Controller
             $reports = Report::where('type', 'post')->get();
 
             foreach ($reports as $item) {
+
                 $user = User::find($item->user_id);
                 $item->user = $user;
                 $post = Post::where('user_id', $item->report_id)->first();
@@ -78,6 +79,5 @@ class AdminReportController extends Controller
 }
 
 
-   
     }
 

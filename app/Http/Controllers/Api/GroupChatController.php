@@ -47,8 +47,8 @@ class GroupChatController extends Controller
         $message->user_id = $request->user_id;
         $message->message = $request->message;
 
-
         if ($request->hasFile('image')) {
+
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '-' . uniqid() . '.' . $extension;
