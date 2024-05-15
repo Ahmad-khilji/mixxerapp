@@ -11,11 +11,11 @@ class ReportController extends Controller
 {
     public function report(ReportRequest $request)
     {
-          $report = new Report();
-        $report->user_id= $request->user_id;
- $report->type = $request->type;
+        $report = new Report();
+        $report->user_id = $request->user_id;
+        $report->type = $request->type;
         $report->report_id = $request->report_id;
-             $report->message = $request->message;
+        $report->message = $request->message;
         $report->save();
 
         return response()->json([

@@ -11,11 +11,9 @@ class PostController extends Controller
 {
     public function createPost(PostRequest $request)
     {
-// return ( $request);
+        // return ( $request);
         $images = $request->file('cover_image');
-
         $imagePaths = [];
-
         foreach ($images as $file) {
             $extension = $file->getClientOriginalExtension();
             $mime = explode('/', $file->getClientMimeType());
@@ -49,9 +47,7 @@ class PostController extends Controller
         $addPost->zoom_link = $request->zoom_link;
 
         $images = $request->file('upload_images');
-
         $imagePaths = [];
-
         foreach ($images as $file) {
             $extension = $file->getClientOriginalExtension();
             $mime = explode('/', $file->getClientMimeType());
@@ -62,7 +58,6 @@ class PostController extends Controller
         }
         $uploadString = implode(',', $imagePaths);
         $addPost->upload_images = $uploadString;
-
 
         $attachment = $request->file('attachments');
         $imagePaths = [];
@@ -75,7 +70,6 @@ class PostController extends Controller
             }
         }
         $attachmentString = implode(',', $imagePaths);
-
         $addPost->attachments = $attachmentString;
         $addPost->description = $request->description;
         $addPost->save();
@@ -86,17 +80,11 @@ class PostController extends Controller
         ]);
     }
 
-
-    
-
-
     public function delete($post_id)
     {
         $post = Post::find($post_id);
-    
         if ($post) {
             $coverImages = explode(',', $post->cover_image);
-           
             foreach ($coverImages as $coverImage) {
                 $coverImagePath = public_path($coverImage);
                 if (file_exists($coverImagePath)) {
@@ -104,51 +92,39 @@ class PostController extends Controller
                 }
                 // return ($coverImagePath);
             }
-    
-           
             $uploadImages = explode(',', $post->upload_images);
-               foreach ($uploadImages as $uploadImage) {
+            foreach ($uploadImages as $uploadImage) {
                 $uploadImagePath = public_path($uploadImage);
                 if (file_exists($uploadImagePath)) {
                     unlink($uploadImagePath);
                 }
                 // return ($uploadImagePath);
             }
-    
-        
             $post->delete();
-    
             return response()->json([
                 'status' => true,
                 'action' => "Post deleted",
             ]);
         }
-    
         return response()->json([
             'status' => false,
             'action' => "No post found against this postId",
         ]);
     }
-    
-
 
     public function postDetail($post_id, $user_id)
     {
-        $post = Post::where('id',$post_id)->where('user_id',$user_id)->first();
+        $post = Post::where('id', $post_id)->where('user_id', $user_id)->first();
         if ($post) {
-            
-        return response()->json([
-                    'status' => true,
-                    'action' =>  "Post detail",
-                    'data' => $post
-                ]);
+            return response()->json([
+                'status' => true,
+                'action' =>  "Post detail",
+                'data' => $post
+            ]);
         }
         return response()->json([
             'status' => false,
             'action' =>  "No post found against this Id",
         ]);
     }
-
-
-
 }

@@ -72,22 +72,22 @@ class AuthController extends Controller
         $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-    
+
         $user->save();
-    
+
         $userdevice = new UserDevice();
         $userdevice->user_id = $user->uuid;
-    
+
         $userdevice->device_name = $request->device_name ?? 'No name';
         $userdevice->device_id = $request->device_id ?? 'No ID';
         $userdevice->timezone = $request->timezone ?? 'No Time';
         $userdevice->token = $request->fcm_token ?? 'No token';
         $userdevice->save();
-    
+
         // $token = $user->createToken('here-token-name')->plainTextToken;
         $new  = User::where('uuid', $user->uuid)->first();
         // $new->token = $token;
-        
+
         return response()->json([
             'status' => true,
             'action' => 'User registered successfully',
@@ -99,7 +99,7 @@ class AuthController extends Controller
     {
         //   return ($request);
         $user = User::Where('email', $request->email)->first();
-        
+
         // return($user);
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
@@ -169,9 +169,7 @@ class AuthController extends Controller
                     'status' => false,
                     'action' => "New password should not be same as old password",
                 ]);
-            }
-            
-            else {
+            } else {
                 $user->update([
                     'password' => Hash::make($request->new_password)
                 ]);
@@ -297,8 +295,4 @@ class AuthController extends Controller
             ]);
         }
     }
-
-
-   
-
 }

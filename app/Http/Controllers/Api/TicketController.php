@@ -16,31 +16,28 @@ class TicketController extends Controller
 
     public function ticket(TicketRequest $request)
     {
-         
-           $ticket = new Ticket();
-    $ticket->user_id = $request->user_id;
+        $ticket = new Ticket();
+        $ticket->user_id = $request->user_id;
         $ticket->message = $request->message;
-           $ticket->save();
+        $ticket->save();
 
-        $message= new Message();
+        $message = new Message();
         $message->user_id = $request->user_id;
-           $message->type = 'text';
-
+        $message->type = 'text';
         $message->sendby = 'user';
         $message->ticket_id = $ticket->id;
- $message->message = $request->message;
+        $message->message = $request->message;
         $message->save();
 
-
-             $adminMessage =new Message();
-           $adminMessage->ticket_id =$ticket->id;
+        $adminMessage = new Message();
+        $adminMessage->ticket_id = $ticket->id;
         $adminMessage->user_id = $request->user_id;
-         $adminMessage->type = 'text';
+        $adminMessage->type = 'text';
         $adminMessage->sendby = "admin";
-         $adminMessage->message = 'Hi,👋Thanks for your message. We ll get back to you within 24 hours.';
+        $adminMessage->message = 'Hi,👋Thanks for your message. We ll get back to you within 24 hours.';
         $adminMessage->save();
 
-        $new= Ticket::find($ticket->id);
+        $new = Ticket::find($ticket->id);
         return response()->json([
             'status' => true,
             'action' => "Ticket Added",
@@ -48,19 +45,18 @@ class TicketController extends Controller
         ]);
     }
 
-
     public function list($user_id, $status)
-{
-    $tickets = Ticket::where('user_id', $user_id)->where('status', $status)->latest()->get();
-    // return($tickets);
-    return response()->json([
-        'status' => true,
-        'action' => "User Ticket",
-        'data' => $tickets,
-    ]);
-}
+    {
+        $tickets = Ticket::where('user_id', $user_id)->where('status', $status)->latest()->get();
+        // return($tickets);
+        return response()->json([
+            'status' => true,
+            'action' => "User Ticket",
+            'data' => $tickets,
+        ]);
+    }
 
-public function closeTicket($ticket_id)
+    public function closeTicket($ticket_id)
     {
         $ticket = Ticket::find($ticket_id);
         if ($ticket) {
@@ -78,28 +74,23 @@ public function closeTicket($ticket_id)
         }
     }
 
-
     public function messageSend(MessageRequest $request)
     {
-
-        $message= new Message();
+        $message = new Message();
         $message->user_id = $request->user_id;
-           $message->ticket_id= $request->ticket_id;
+        $message->ticket_id = $request->ticket_id;
         $message->message = $request->message;
- $message->type = $request->type;
+        $message->type = $request->type;
         $message->sendBy = 'user';
         $message->save();
 
-
         $newMessage = Message::find($message->id);
-
         return response()->json([
             'status' => true,
             'action' => 'message send',
             'data' => $newMessage,
         ]);
     }
-
 
     public function messageList($ticket_id)
     {
@@ -123,7 +114,6 @@ public function closeTicket($ticket_id)
         ]);
     }
 
-
     public function faqs()
     {
         $list = Faq::all();
@@ -133,5 +123,4 @@ public function closeTicket($ticket_id)
             'data' => $list
         ]);
     }
-
 }

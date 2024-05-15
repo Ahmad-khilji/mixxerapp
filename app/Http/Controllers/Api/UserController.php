@@ -15,8 +15,6 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-
-
     public function profile(Request $request)
     {
         $user = User::find($request->user_id);
@@ -26,7 +24,7 @@ class UserController extends Controller
                 'action' => 'User not found',
             ]);
         }
-    
+
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $extension = $file->getClientOriginalExtension();
@@ -35,12 +33,9 @@ class UserController extends Controller
                 $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
             }
         }
-    
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->bio = $request->bio;
-      
-    
         if ($request->location) {
             $user->location = $request->location;
             $user->lat = $request->lat;
@@ -50,16 +45,13 @@ class UserController extends Controller
             $user->lat = '';
             $user->lng = '';
         }
-    
         $user->save();
-    
         return response()->json([
             'status' => true,
             'action' => 'User profile',
             'data' =>  $user,
         ]);
     }
-
 
     public function editProfile(EditProfileRequest $request)
     {
@@ -70,7 +62,7 @@ class UserController extends Controller
                 'action' => 'User not found',
             ]);
         }
-    
+
         if ($request->has('email')) {
             if (User::where('email', $request->email)->where('uuid', '!=', $request->user_id)->exists()) {
                 return response()->json([
@@ -81,7 +73,7 @@ class UserController extends Controller
                 $user->email = $request->email;
             }
         }
-    
+
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $extension = $file->getClientOriginalExtension();
@@ -90,7 +82,6 @@ class UserController extends Controller
                 $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
             }
         }
-    
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->dob = $request->dob;
@@ -102,7 +93,6 @@ class UserController extends Controller
         $user->occupation = $request->occupation;
         $user->language = $request->language;
         $user->ethnicity = $request->ethnicity;
-    
         if ($request->location) {
             $user->location = $request->location;
             $user->lat = $request->lat;
@@ -113,22 +103,17 @@ class UserController extends Controller
             $user->lng = '';
         }
         $user->save();
-    
         return response()->json([
             'status' => true,
             'action' => 'Profile updated successfully',
             'data' =>  $user,
         ]);
     }
-    
-
 
     public function removeImage(Request $request)
     {
         $user_id = $request->user_id;
-    
         $user = User::find($user_id);
-    
         if ($user) {
             $profileImagePath = public_path($user->profile_image);
             if (file_exists($profileImagePath)) {
@@ -136,7 +121,7 @@ class UserController extends Controller
             }
             $user->profile_image = '';
             $user->save();
-    
+
             return response()->json([
                 'status' => true,
                 'action' => "Profile image removed",
@@ -149,39 +134,35 @@ class UserController extends Controller
             ]);
         }
     }
-    
 
+    public function socialConnect(SocialConnectRequest $request)
+    {
+        $existingSocial = SocialConnect::where('user_id', $request->user_id)->where('platform', $request->platform)->first();
+        if ($existingSocial) {
+            return response()->json([
+                'status' => false,
+                'action' => 'UserId and platform already exist',
+            ]);
+        } else {
+            $socaial = new SocialConnect();
+            $socaial->user_id = $request->user_id;
+            $socaial->platform = $request->platform;
+            $socaial->platform_id = $request->platform_id;
+            $socaial->platform_email = $request->platform_email;
+            $socaial->save();
+            return response()->json([
+                'status' => true,
+                'action' => 'Social account connected',
 
-public function socialConnect(SocialConnectRequest $request)
-{
-    $existingSocial = SocialConnect::where('user_id', $request->user_id)->where('platform', $request->platform)->first();
-
-    if ($existingSocial) {
-        return response()->json([
-            'status' => false,
-            'action' => 'UserId and platform already exist',
-        ]);
-    } else {
-
-        $socaial = new SocialConnect();
-        $socaial->user_id = $request->user_id;
-        $socaial->platform = $request->platform;
-        $socaial->platform_id = $request->platform_id;
-        $socaial->platform_email = $request->platform_email;
-        $socaial->save();
-        return response()->json([
-            'status' => true,
-            'action' => 'Social account connected',
-
-        ]);
+            ]);
+        }
     }
-}
 
-public function removeSocial(RemoveSocialRequest $request)
+    public function removeSocial(RemoveSocialRequest $request)
     {
         // return($request);
         $existingSocial = SocialConnect::where('user_id', $request->user_id)->where('platform', $request->platform)->first();
-// return ($existingSocial);
+        // return ($existingSocial);
         if ($existingSocial) {
             $existingSocial->delete();
             return response()->json([
@@ -196,7 +177,6 @@ public function removeSocial(RemoveSocialRequest $request)
         }
     }
 
-
     public function socialList($user_id)
     {
         $social = SocialConnect::where('user_id', $user_id)->get();
@@ -207,39 +187,26 @@ public function removeSocial(RemoveSocialRequest $request)
         ]);
     }
 
-
-
     public function block(BlockRequest $request)
     {
-
-       
-
         $existingBlock = Block::where('user_id', $request->user_id)->where('block_id', $request->block_id)->first();
-
         if ($existingBlock) {
-
             $existingBlock->delete();
-
             return response()->json([
                 'status' => false,
                 'action' => 'User Unblocked successfully',
             ]);
         } else {
-
             $block = new Block();
             $block->user_id = $request->user_id;
             $block->block_id = $request->block_id;
             $block->save();
-
             return response()->json([
                 'status' => true,
                 'action' => 'User Blocked successfully',
-
-
             ]);
         }
     }
-
 
     public function blockList($block_id)
     {
@@ -254,9 +221,4 @@ public function removeSocial(RemoveSocialRequest $request)
             'data' => $user,
         ]);
     }
-
-
-    
-
-    
 }
