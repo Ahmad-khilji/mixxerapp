@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FriendRequestController;
 use App\Http\Controllers\Api\GroupChatController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ReportController;
@@ -36,6 +37,7 @@ Route::post('user/auth/social' ,[ AuthController::class, 'social']);
 Route::post('user/auth/changePassword' ,[ AuthController::class, 'changePassword']);
 Route::post('user/auth/logout' ,[ AuthController::class, 'logout']);
 Route::post('user/auth/deleteAccount' ,[ AuthController::class, 'deleteAccount']);
+Route::post('user/profile' ,[ UserController::class, 'profile']);
 Route::post('user/edit/profile' ,[ UserController::class, 'editProfile']);
 Route::post('user/remove/profile/image' ,[ UserController::class, 'removeImage']);
 Route::post('user/social/connect' ,[ UserController::class, 'socialConnect']);
@@ -58,3 +60,7 @@ Route::get('post/detail/{post_id}/{user_id}', [PostController::class, 'postDetai
 Route::post('create/group/{user_id}', [GroupChatController::class, 'createGroup']);
 Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
 Route::get('group/message/list/{group_id}', [GroupChatController::class, 'messageList']);
+Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
+Route::post('accept/request', [FriendRequestController::class, 'acceptRequest']);
+Route::post('cancel/request', [FriendRequestController::class, 'cancelRequest']);
+Route::post('remove/friend', [FriendRequestController::class, 'removeFriend']);

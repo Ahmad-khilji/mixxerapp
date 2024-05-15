@@ -16,6 +16,51 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
+
+    public function profile(Request $request)
+    {
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'action' => 'User not found',
+            ]);
+        }
+    
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '-' . uniqid() . '.' . $extension;
+            if ($file->move('profiles/user/' . $request->user_id . '/profile/', $filename)) {
+                $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
+            }
+        }
+    
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->bio = $request->bio;
+      
+    
+        if ($request->location) {
+            $user->location = $request->location;
+            $user->lat = $request->lat;
+            $user->lng = $request->lng;
+        } else {
+            $user->location = '';
+            $user->lat = '';
+            $user->lng = '';
+        }
+    
+        $user->save();
+    
+        return response()->json([
+            'status' => true,
+            'action' => 'User profile',
+            'data' =>  $user,
+        ]);
+    }
+
+
     public function editProfile(EditProfileRequest $request)
     {
         $user = User::find($request->user_id);
@@ -67,8 +112,6 @@ class UserController extends Controller
             $user->lat = '';
             $user->lng = '';
         }
-    
-        // Save the updated user profile
         $user->save();
     
         return response()->json([
@@ -212,6 +255,8 @@ public function removeSocial(RemoveSocialRequest $request)
         ]);
     }
 
+
+    
 
     
 }
