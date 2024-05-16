@@ -221,4 +221,19 @@ class UserController extends Controller
             'data' => $user,
         ]);
     }
+
+    public function search($name)
+    {
+        $users = User::select('uuid', 'first_name', 'last_name', 'email')
+            ->where('first_name', 'like', '%' . $name . '%')
+            ->orWhere('last_name', 'like', '%' . $name . '%')
+            ->get();
+    
+        return response()->json([
+            'status' => true,
+            'action' => "Users",
+            'data' => $users
+        ]);
+    }
+    
 }
