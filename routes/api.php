@@ -65,3 +65,5 @@ Route::post('accept/request', [FriendRequestController::class, 'acceptRequest'])
 Route::post('cancel/request', [FriendRequestController::class, 'cancelRequest']);
 Route::post('remove/friend', [FriendRequestController::class, 'removeFriend']);
 Route::get('search/{name}', [UserController::class, 'search']);
+Route::post('users/message', [UserController::class, 'userMessage']);
+Route::get('users/message/list', [UserController::class, 'usermessageList']);

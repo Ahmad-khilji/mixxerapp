@@ -72,7 +72,7 @@ class AuthController extends Controller
         $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-
+        $user->timezone = $request->timezone;
         $user->save();
 
         $userdevice = new UserDevice();

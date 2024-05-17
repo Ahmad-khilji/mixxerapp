@@ -7,52 +7,16 @@ use App\Http\Requests\Api\BlockRequest;
 use App\Http\Requests\Api\EditProfileRequest;
 use App\Http\Requests\Api\RemoveSocialRequest;
 use App\Http\Requests\Api\SocialConnectRequest;
+use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\Block;
 use App\Models\SocialConnect;
 
 use App\Models\User;
+use App\Models\UserMessage;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function profile(Request $request)
-    {
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'action' => 'User not found',
-            ]);
-        }
-
-        if ($request->hasFile('profile_image')) {
-            $file = $request->file('profile_image');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('profiles/user/' . $request->user_id . '/profile/', $filename)) {
-                $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
-            }
-        }
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->bio = $request->bio;
-        if ($request->location) {
-            $user->location = $request->location;
-            $user->lat = $request->lat;
-            $user->lng = $request->lng;
-        } else {
-            $user->location = '';
-            $user->lat = '';
-            $user->lng = '';
-        }
-        $user->save();
-        return response()->json([
-            'status' => true,
-            'action' => 'User profile',
-            'data' =>  $user,
-        ]);
-    }
-
     public function editProfile(EditProfileRequest $request)
     {
         $user = User::find($request->user_id);
@@ -222,18 +186,61 @@ class UserController extends Controller
         ]);
     }
 
+
+    public function userMessage(UserMessageRequest $request)
+    {
+        $fromUser = User::where('uuid', $request->from)->first();
+        $toUser = User::where('uuid', $request->to)->first();
+
+        if (!$fromUser || !$toUser) {
+            return response()->json([
+                'status' => false,
+                'action' => 'User not found',
+            ]);
+        }
+        $userMessage = new UserMessage();
+        $userMessage->from = $request->from;
+        $userMessage->to = $request->to;
+        $userMessage->message = $request->message;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '-' . uniqid() . '.' . $extension;
+            if ($file->move('usermessage/user/'  . '/usermessage/', $filename)) {
+                $userMessage->image = '/usermessage/user/' . '/usermessage/' . $filename;
+            }
+        }
+        $userMessage->save();
+
+        return response()->json([
+            'status' => true,
+            'action' => 'Message sent from user to another user',
+        ]);
+    }
+
+    public function usermessageList()
+    {
+        $userMessage = userMessage::get();
+        return response()->json([
+            'status' => true,
+            'action' => 'User message listed',
+            'data' => $userMessage,
+        ]);
+    }
+
+
     public function search($name)
     {
         $users = User::select('uuid', 'first_name', 'last_name', 'email')
             ->where('first_name', 'like', '%' . $name . '%')
             ->orWhere('last_name', 'like', '%' . $name . '%')
             ->get();
-    
+
         return response()->json([
             'status' => true,
             'action' => "Users",
             'data' => $users
         ]);
     }
-    
 }
