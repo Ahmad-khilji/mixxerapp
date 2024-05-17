@@ -65,7 +65,9 @@ Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
 Route::post('accept/request', [FriendRequestController::class, 'acceptRequest']);
 Route::post('cancel/request', [FriendRequestController::class, 'cancelRequest']);
 Route::post('remove/friend', [FriendRequestController::class, 'removeFriend']);
+Route::get('home/{user_id}', [UserController::class, 'home']);
 Route::get('search/{name}', [UserController::class, 'search']);
 Route::post('users/message', [UserController::class, 'userMessage']);
 Route::get('users/message/list', [UserController::class, 'usermessageList']);
+Route::post('join', [UserController::class, 'joinParticipent']);
 

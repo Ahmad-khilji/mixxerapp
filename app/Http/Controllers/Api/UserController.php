@@ -9,6 +9,7 @@ use App\Http\Requests\Api\RemoveSocialRequest;
 use App\Http\Requests\Api\SocialConnectRequest;
 use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\Block;
+use App\Models\Post;
 use App\Models\SocialConnect;
 
 use App\Models\User;
@@ -228,6 +229,51 @@ class UserController extends Controller
             'data' => $userMessage,
         ]);
     }
+
+    public function home($user_id)
+    {
+        $user = User::where('uuid', $user_id)->first();
+        if ($user) {
+            $posts = Post::all();
+            return response()->json([
+                'status' => true,
+                'action' => 'Home',
+                'data' => $posts,
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'action' => 'No found userid',
+            ]);
+        }
+    }
+
+    public function joinParticipent(Request $request)
+{
+    $user = User::where('uuid', $request->user_id)->first();
+
+    if ($user) {
+        $post = Post::where('id', $request->post_id)->first();
+
+        if ($post) {
+            return response()->json([
+                'status' => true,
+                'action' => 'User participant this mixxer',
+                'data' => $user
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'Post not found',
+            ]);
+        }
+    } else {
+        return response()->json([
+            'status' => false,
+            'action' => 'User not found',
+        ]);
+    }
+}
 
 
     public function search($name)
