@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SendMessageGroup;
 use App\Models\CreateGroup;
 use App\Models\GroupMessage;
-
+use Illuminate\Http\Request;
 use App\Models\User;
 
 
@@ -52,9 +52,9 @@ class GroupChatController extends Controller
                     $message->image = '/groupimage/user/' . $request->user_id . '/groupimage/' . $filename;
                 }
             }
-
+// return($message);
             $message->save();
-            // return($message);
+            
             return response()->json([
                 'status' => true,
                 'action' => 'Message sent successfully',
@@ -81,5 +81,24 @@ class GroupChatController extends Controller
         }
     }
 
-    
+
+    public function userleaveGroup(Request $request)
+    {
+
+        $leftGroup =  GroupMessage::where('group_id', $request->group_id)->where('user_id', $request->user_id)->first();
+        // return( $messageList );
+        if ($leftGroup) {
+            $leftGroup->delete();
+            return response()->json([
+                'status' => true,
+                'action' => 'User leave this group',
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'action' => 'No found groupid and userid',
+            ]);
+        }
+    }
+
 }

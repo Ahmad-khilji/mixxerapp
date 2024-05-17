@@ -60,6 +60,7 @@ Route::get('post/detail/{post_id}/{user_id}', [PostController::class, 'postDetai
 Route::post('create/group/{user_id}', [GroupChatController::class, 'createGroup']);
 Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
 Route::get('group/message/list/{group_id}', [GroupChatController::class, 'messageList']);
+Route::post('user/left/group', [GroupChatController::class, 'userleaveGroup']);
 Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
 Route::post('accept/request', [FriendRequestController::class, 'acceptRequest']);
 Route::post('cancel/request', [FriendRequestController::class, 'cancelRequest']);
@@ -67,3 +68,4 @@ Route::post('remove/friend', [FriendRequestController::class, 'removeFriend']);
 Route::get('search/{name}', [UserController::class, 'search']);
 Route::post('users/message', [UserController::class, 'userMessage']);
 Route::get('users/message/list', [UserController::class, 'usermessageList']);
+
