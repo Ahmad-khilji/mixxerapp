@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('create_groups', function (Blueprint $table) {
+        Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('user_id')->references('uuid')->on('users')->onDelete('cascade');
-            $table->string('first_name');
+            $table->uuid('user_id');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('create_groups');
+        Schema::dropIfExists('participants');
     }
 };

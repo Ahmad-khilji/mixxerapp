@@ -18,8 +18,8 @@ class PostController extends Controller
             $extension = $file->getClientOriginalExtension();
             $mime = explode('/', $file->getClientMimeType());
             $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('covers/user/' . $request->user_id . '/post/', $filename)) {
-                $imagePaths[] = '/covers/user/' . $request->user_id . '/post/' . $filename;
+            if ($file->move('uploads/user/' . $request->user_id . '/post/', $filename)) {
+                $imagePaths[] = '/uploads/user/' . $request->user_id . '/post/' . $filename;
             }
         }
         $coverString = implode(',', $imagePaths);
@@ -65,8 +65,8 @@ class PostController extends Controller
             $extension = $file->getClientOriginalExtension();
             $mime = explode('/', $file->getClientMimeType());
             $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('attachment/user/' . $request->user_id . '/attachment/', $filename)) {
-                $imagePaths[] = '/attachment/user/' . $request->user_id . '/attachment/' . $filename;
+            if ($file->move('uploads/user/' . $request->user_id . '/attachment/', $filename)) {
+                $imagePaths[] = '/uploads/user/' . $request->user_id . '/attachment/' . $filename;
             }
         }
         $attachmentString = implode(',', $imagePaths);
@@ -112,20 +112,39 @@ class PostController extends Controller
         ]);
     }
 
-    public function postDetail($post_id, $user_id)
+    public function postDetails($post_id)
     {
-        $post = Post::where('id', $post_id)->where('user_id', $user_id)->first();
+        $post = Post::with(['participants' => function($query) {
+            $query->where('status', 1);
+        }])->find($post_id);
+
         if ($post) {
             return response()->json([
                 'status' => true,
-                'action' =>  "Post detail",
-                'data' => $post
+                'action' => 'Post Details',
+                'data' => $post,
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'Post Not Found',
             ]);
         }
-        return response()->json([
-            'status' => false,
-            'action' =>  "No post found against this Id",
-        ]);
     }
     
+
+    public function search($name)
+    {
+        $posts = Post::select('user_id', 'title', 'city','category','cover_image','start_date','end_date')
+            ->where('title', 'like', '%' . $name . '%')
+            ->orWhere('city', 'like', '%' . $name . '%')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'action' => "Posts",
+            'data' => $posts
+        ]);
+    }
+
 }

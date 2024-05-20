@@ -4,57 +4,55 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SendMessageGroup;
-use App\Models\CreateGroup;
+use App\Http\Requests\Api\SendNotificationRequest;
 use App\Models\GroupMessage;
-use Illuminate\Http\Request;
+use App\Models\Notification;
+use App\Models\Participant;
+use App\Models\Post;
 use App\Models\User;
-
+use Google\Rpc\Context\AttributeContext\Request;
 
 class GroupChatController extends Controller
 {
-    public function createGroup($user_id)
+
+    public function messageList(Request $request)
     {
-        $user = User::where('uuid', $user_id)->first();
-        // return ( $user );
-        if ($user) {
-            $create = new CreateGroup();
-            $create->user_id = $user_id;
-            $create->first_name = $user->first_name;
-            $create->save();
-            // return( $create);
-            return response()->json([
-                'status' => true,
-                'action' => 'Group created successfully',
-                'data' => $create
-            ]);
-        } else {
+        $messageList = GroupMessage::get();
+
+        if ($messageList->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'action' => "No account found against this userId",
+                'action' => 'No messages found for this group',
             ]);
         }
+
+        return response()->json([
+            'status' => true,
+            'action' => 'Group messages listed',
+            'data' => $messageList,
+        ]);
     }
 
-    public function sendMessageGroup(SendMessageGroup $request)
+    public function sendMessageGroup(sendMessageGroup $request)
     {
-        $group = createGroup::where('id', $request->group_id)->first();
-        if ($group) {
+        $groupChat = Participant::where('user_id', $request->user_id)->where('post_id', $request->post_id)->first();
+        if ($groupChat) {
             $message = new GroupMessage();
-            $message->group_id = $request->group_id;
             $message->user_id = $request->user_id;
+            $message->post_id = $request->post_id;
             $message->message = $request->message;
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $extension = $file->getClientOriginalExtension();
                 $filename = time() . '-' . uniqid() . '.' . $extension;
-                if ($file->move('groupimage/user/' . $request->user_id . '/groupimage/', $filename)) {
-                    $message->image = '/groupimage/user/' . $request->user_id . '/groupimage/' . $filename;
+                if ($file->move('uploads/user/' . $request->user_id . '/groupimage/', $filename)) {
+                    $message->image = '/uploads/user/' . $request->user_id . '/groupimage/' . $filename;
                 }
             }
-// return($message);
+            // return($message);
             $message->save();
-            
+
             return response()->json([
                 'status' => true,
                 'action' => 'Message sent successfully',
@@ -63,42 +61,80 @@ class GroupChatController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'No group found against this groupId',
-            ]);
-        }
-    }
-
-    public function messageList($group_id)
-    {
-        $messageList =  GroupMessage::where('group_id', $group_id)->get();
-        // return( $messageList );
-        if ($messageList) {
-            return response()->json([
-                'status' => true,
-                'action' => 'Group messages listed',
-                'data' => $messageList,
+                'action' => 'No group found against this Status',
             ]);
         }
     }
 
 
-    public function userleaveGroup(Request $request)
+    public function userleaveGroup($post_id, $user_id)
     {
 
-        $leftGroup =  GroupMessage::where('group_id', $request->group_id)->where('user_id', $request->user_id)->first();
-        // return( $messageList );
+        $leftGroup =  GroupMessage::where('user_id', $user_id);
         if ($leftGroup) {
-            $leftGroup->delete();
+            $postId =  GroupMessage::where('post_id', $post_id);
+            if ($postId) {
+                $postId->delete();
+                return response()->json([
+                    'status' => true,
+                    'action' => 'User leave this groupchat',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'action' => 'No found postid',
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'No found userid',
+            ]);
+        }
+    }
+
+    public function requestParticipation($post_id, $user_id)
+    {
+        $post = Post::where('id', $post_id)->where('user_id', $user_id)->first();
+        if($post){
+            $participant = new Participant();
+            $participant->user_id = $user_id;
+            $participant->post_id = $post_id;
+            $participant->status = 0;
+            $participant->save();
+    
             return response()->json([
                 'status' => true,
-                'action' => 'User leave this group',
+                'action' => 'Requested Participation',
+                'data' => $participant,
             ]);
         }else{
             return response()->json([
                 'status' => false,
-                'action' => 'No found groupid and userid',
+                'action' => 'No found post',
             ]);
         }
+        
     }
 
+    public function acceptParticipation($participant_id)
+    {
+        $participant = Participant::find($participant_id);
+        if ($participant) {
+            $participant->status = 1;
+            $participant->save();
+
+            return response()->json([
+                'status' => true,
+                'action' => 'Accepted Participation',
+                'data' => $participant,
+            ]);
+        }
+        return response()->json([
+            'status' => false,
+            'action' => 'Participant Not Found',
+        ]);
+    }
+
+   
 }

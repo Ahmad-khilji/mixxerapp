@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_messages', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('user_id')->references('uuid')->on('users')->onDelete('cascade');
-            $table->string('post_id');
-            $table->string('message');
-            $table->string('image')->default('');
+            $table->string('title');
+            $table->text('message');
+            $table->boolean('is_read')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_messages');
+        Schema::dropIfExists('notifications');
     }
 };

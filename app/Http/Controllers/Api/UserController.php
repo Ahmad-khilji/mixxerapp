@@ -43,8 +43,8 @@ class UserController extends Controller
             $file = $request->file('profile_image');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('profiles/user/' . $request->user_id . '/profile/', $filename)) {
-                $user->profile_image = '/profiles/user/' . $request->user_id . '/profile/' . $filename;
+            if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename)) {
+                $user->profile_image = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
             }
         }
         $user->first_name = $request->first_name;
@@ -208,8 +208,8 @@ class UserController extends Controller
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('usermessage/user/'  . '/usermessage/', $filename)) {
-                $userMessage->image = '/usermessage/user/' . '/usermessage/' . $filename;
+            if ($file->move('uploads/user/'  . '/usermessageimage/', $filename)) {
+                $userMessage->image = '/uploads/user/' . '/usermessageimage/' . $filename;
             }
         }
         $userMessage->save();
@@ -240,53 +240,11 @@ class UserController extends Controller
                 'action' => 'Home',
                 'data' => $posts,
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => false,
                 'action' => 'No found userid',
             ]);
         }
-    }
-
-    public function joinParticipent(Request $request)
-{
-    $user = User::where('uuid', $request->user_id)->first();
-
-    if ($user) {
-        $post = Post::where('id', $request->post_id)->first();
-
-        if ($post) {
-            return response()->json([
-                'status' => true,
-                'action' => 'User participant this mixxer',
-                'data' => $user
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'action' => 'Post not found',
-            ]);
-        }
-    } else {
-        return response()->json([
-            'status' => false,
-            'action' => 'User not found',
-        ]);
-    }
-}
-
-
-    public function search($name)
-    {
-        $users = User::select('uuid', 'first_name', 'last_name', 'email')
-            ->where('first_name', 'like', '%' . $name . '%')
-            ->orWhere('last_name', 'like', '%' . $name . '%')
-            ->get();
-
-        return response()->json([
-            'status' => true,
-            'action' => "Users",
-            'data' => $users
-        ]);
     }
 }
