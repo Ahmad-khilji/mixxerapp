@@ -71,9 +71,11 @@ Route::get('search/{name}', [PostController::class, 'search']);
 
 Route::post('/participant/request/{post_id}/{user_id}', [GroupChatController::class, 'requestParticipation']);
 Route::post('/participant/accept/{participant_id}', [GroupChatController::class, 'acceptParticipation']);
+Route::get('/participant/list', [GroupChatController::class, 'listPaticipant']);
 Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
 Route::get('group/message/list', [GroupChatController::class, 'messageList']);
 Route::get('user/left/group/{post_id}/{user_id}', [GroupChatController::class, 'userleaveGroup']);
+Route::get('participant/post/list/{user_id}', [GroupChatController::class, 'participantpostList']);
 
 Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
 Route::post('accept/request', [FriendRequestController::class, 'acceptRequest']);
