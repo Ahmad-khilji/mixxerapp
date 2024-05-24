@@ -92,6 +92,16 @@
         </li>
 
 
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Interest</span>
+        </li>
+        <li class="menu-item {{ Request::url() == route('dashboard-interest-') ? 'active' : '' }}">
+            <a href="{{ route('dashboard-interest-') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-circle"></i>
+                <div data-i18n="FAQ'S">Interest'S</div>
+            </a>
+        </li>
+
     </ul>
 
 </aside>

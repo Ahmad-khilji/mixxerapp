@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminInterestController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminTicketController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,13 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard-')->group(func
         Route::get('post/delete/{user_id}/{report_id}', [AdminReportController::class, 'deletePost'])->name('delete-post');
 
         
+    });
+
+    Route::prefix('interest')->name('interest-')->group(function () {
+        Route::get('/', [AdminInterestController::class, 'interests']);
+        Route::post('add', [AdminInterestController::class, 'addInterest'])->name('add');
+        Route::post('edit/{id}', [AdminInterestController::class, 'editInterest'])->name('edit');
+        Route::get('delete-Interest/{id}', [AdminInterestController::class, 'deleteInterest'])->name('delete');
     });
 });
 

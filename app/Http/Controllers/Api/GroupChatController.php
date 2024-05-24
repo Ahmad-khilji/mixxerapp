@@ -30,7 +30,7 @@ class GroupChatController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'No found post',
+                'action' => 'Post not found',
             ]);
         }
     }
@@ -120,13 +120,13 @@ class GroupChatController extends Controller
             } else {
                 return response()->json([
                     'status' => false,
-                    'action' => 'No found postid',
+                    'action' => 'PostId not found',
                 ]);
             }
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'No found userid',
+                'action' => 'UserId not found',
             ]);
         }
     }

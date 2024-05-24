@@ -7,6 +7,7 @@ use App\Http\Requests\Api\MessageRequest;
 use App\Http\Requests\Api\TicketRequest;
 use App\Models\Category;
 use App\Models\Faq;
+use App\Models\Interest;
 use App\Models\Message;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -120,6 +121,16 @@ class TicketController extends Controller
         return response()->json([
             'status' => true,
             'action' =>  'Faqs',
+            'data' => $list
+        ]);
+    }
+
+    public function interests()
+    {
+        $list = Interest::all();
+        return response()->json([
+            'status' => true,
+            'action' =>  'Interests',
             'data' => $list
         ]);
     }

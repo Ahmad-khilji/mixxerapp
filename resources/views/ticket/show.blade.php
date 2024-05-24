@@ -121,7 +121,7 @@
                                 </ul>
                             </div>
                             <!-- Chat History Footer (Message Input) -->
-                            @if ($ticket->status == 0)
+                            @if ($ticket->status == 1)
                                 <div class="chat-history-footer shadow-sm">
                                     <form class="d-flex justify-content-between align-items-center" id="messageForm"
                                         enctype="multipart/form-data">

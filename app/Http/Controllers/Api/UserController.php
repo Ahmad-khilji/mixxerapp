@@ -27,34 +27,13 @@ class UserController extends Controller
                 'status' => false,
                 'action' => 'User not found',
             ]);
-        }
-
-        if ($request->hasFile('profile_image')) {
-            $file = $request->file('profile_image');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename)) {
-                $user->profile_image = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
-            }
-        }
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->bio = $request->bio;
-        if ($request->location) {
-            $user->location = $request->location;
-            $user->lat = $request->lat;
-            $user->lng = $request->lng;
         } else {
-            $user->location = '';
-            $user->lat = '';
-            $user->lng = '';
+            return response()->json([
+                'status' => true,
+                'action' => 'User profile',
+                'data' => $user
+            ]);
         }
-        $user->save();
-        return response()->json([
-            'status' => true,
-            'action' => 'User profile',
-            'data' =>  $user,
-        ]);
     }
 
 
@@ -86,18 +65,64 @@ class UserController extends Controller
             if ($file->move('uploads/user/' . $request->user_id . '/profile/', $filename)) {
                 $user->profile_image = '/uploads/user/' . $request->user_id . '/profile/' . $filename;
             }
+        }else{
+            $user->profile_image= '';
         }
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->dob = $request->dob;
-        $user->gender = $request->gender;
-        $user->bio = $request->bio;
-        $user->age = $request->age;
-        $user->education = $request->education;
-        $user->religion = $request->religion;
-        $user->occupation = $request->occupation;
-        $user->language = $request->language;
-        $user->ethnicity = $request->ethnicity;
+        if($request->first_name){
+            $user->first_name = $request->first_name;
+        }else{
+            $user->first_name= '';
+        }
+        if($request->last_name){
+            $user->last_name = $request->last_name;
+        }else{
+            $user->last_name= '';
+        }
+        if($request->dob){
+            $user->dob = $request->dob;
+        }else{
+            $user->dob= '';
+        }
+        if($request->gender){
+            $user->gender = $request->gender;
+        }else{
+            $user->gender= '';
+        }
+        if($request->bio){
+            $user->bio = $request->bio;
+        }else{
+            $user->bio= '';
+        }
+        if($request->age){
+            $user->age = $request->age;
+        }else{
+            $user->age= '';
+        }
+        if($request->education){
+            $user->education = $request->education;
+        }else{
+            $user->education= '';
+        }
+        if($request->religion){
+            $user->religion = $request->religion;
+        }else{
+            $user->religion= '';
+        }
+        if($request->occupation){
+            $user->occupation = $request->occupation;
+        }else{
+            $user->occupation= '';
+        }
+        if($request->language){
+            $user->language = $request->language;
+        }else{
+            $user->language= '';
+        }
+        if($request->ethnicity){
+            $user->ethnicity = $request->ethnicity;
+        }else{
+            $user->ethnicity= '';
+        }
         if ($request->location) {
             $user->location = $request->location;
             $user->lat = $request->lat;
@@ -270,21 +295,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function home($user_id)
-    {
-        $user = User::where('uuid', $user_id)->first();
-        if ($user) {
-            $posts = Post::all();
-            return response()->json([
-                'status' => true,
-                'action' => 'Home',
-                'data' => $posts,
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'action' => 'No found userid',
-            ]);
-        }
-    }
+    // public function home($user_id)
+    // {
+    //     $user = User::where('uuid', $user_id)->first();
+    //     if ($user) {
+    //         $posts = Post::all();
+    //         return response()->json([
+    //             'status' => true,
+    //             'action' => 'Home',
+    //             'data' => $posts,
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'status' => false,
+    //             'action' => 'User not found',
+    //         ]);
+    //     }
+    // }
 }

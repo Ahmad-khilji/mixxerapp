@@ -36,7 +36,9 @@ return new class extends Migration
             $table->string('upload_images')->default('');
             $table->string('attachments')->default('');
             $table->string('description')->default('');
-
+            $table->string('location')->default('');
+            $table->string('lat')->default('');
+            $table->string('lng')->default('');
             $table->timestamps();
         });
     }

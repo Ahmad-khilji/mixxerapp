@@ -20,7 +20,6 @@ class FriendRequestController extends Controller
         return response()->json([
             'status' => true,
             'action' => 'Friend request sent successfully.',
-            'data' => $createRequest
         ]);
     }
 

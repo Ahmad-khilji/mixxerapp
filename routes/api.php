@@ -61,6 +61,8 @@ Route::get('message/list/{ticket_id}' ,[ TicketController::class, 'messageList']
 Route::get('category/list' ,[ TicketController::class, 'categoryList']);
 Route::get('faqs' ,[ TicketController::class, 'faqs']);
 
+Route::get('interests' ,[ TicketController::class, 'interests']);
+
 Route::post('add/report', [ReportController::class, 'report']);
 
 Route::post('create/post' ,[ PostController::class, 'createPost']);

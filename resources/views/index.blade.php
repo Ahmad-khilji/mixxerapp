@@ -1,5 +1,5 @@
 @extends('layouts1.base')
-@section('title', 'Dashborad')
+@section('title', 'Dashboard')
 @section('main', 'Statistics Management')
 @section('link')
     <link rel="stylesheet" href="/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
