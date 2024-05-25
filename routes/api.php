@@ -83,6 +83,7 @@ Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
 Route::post('accept/request', [FriendRequestController::class, 'acceptRequest']);
 Route::post('cancel/request', [FriendRequestController::class, 'cancelRequest']);
 Route::post('remove/friend', [FriendRequestController::class, 'removeFriend']);
+Route::post('friend/list', [FriendRequestController::class, 'friendList']);
 
 Route::post('notification/send', [NotificationController::class, 'notificationSend']);
 Route::get('notification/list', [NotificationController::class, 'notificationsList']);

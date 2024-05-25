@@ -7,6 +7,8 @@ use App\Http\Requests\Api\RemoveFriend;
 use App\Models\FriendRequest;
 use App\Http\Requests\Api\sendRequest;
 use App\Models\Friend;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class FriendRequestController extends Controller
 {
@@ -74,6 +76,20 @@ class FriendRequestController extends Controller
         return response()->json([
             'status' => true,
             'action' => 'Removed friend.',
+        ]);
+    }
+    public function friendList(Request $request) {
+    $friendList = Friend::where('user_id', $request->user_id)->get();
+    if (!$friendList) {
+            return response()->json([
+                'status' => false,
+                'action' => 'User not found.'
+            ]);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Friends listed.',
+            'data' => $friendList
         ]);
     }
 }

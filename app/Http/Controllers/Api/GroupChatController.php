@@ -7,7 +7,7 @@ use App\Http\Requests\Api\SendMessageGroup;
 use App\Models\GroupMessage;
 use App\Models\Participant;
 use App\Models\Post;
-use Google\Rpc\Context\AttributeContext\Request;
+use Illuminate\Http\Request;
 
 class GroupChatController extends Controller
 {
