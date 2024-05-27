@@ -75,7 +75,7 @@ Route::post('/participant/request/{post_id}/{user_id}', [GroupChatController::cl
 Route::post('/participant/accept/{participant_id}', [GroupChatController::class, 'acceptParticipation']);
 Route::get('/participant/list', [GroupChatController::class, 'listPaticipant']);
 Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
-Route::get('group/message/list', [GroupChatController::class, 'messageList']);
+Route::get('group/message/list/{post_id}', [GroupChatController::class, 'messageList']);
 Route::get('user/left/group/{post_id}/{user_id}', [GroupChatController::class, 'userleaveGroup']);
 Route::get('participant/post/list/{user_id}', [GroupChatController::class, 'participantpostList']);
 

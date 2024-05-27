@@ -7,7 +7,6 @@ use App\Http\Requests\Api\SendMessageGroup;
 use App\Models\GroupMessage;
 use App\Models\Participant;
 use App\Models\Post;
-use Illuminate\Http\Request;
 
 class GroupChatController extends Controller
 {
@@ -56,7 +55,7 @@ class GroupChatController extends Controller
 
     public function sendMessageGroup(sendMessageGroup $request)
     {
-        $groupChat = Participant::where('user_id', $request->user_id)->where('post_id', $request->post_id)->first();
+        $groupChat = Participant::where('user_id', $request->user_id)->where('post_id', $request->post_id)->where('status', 1)->first();
         if ($groupChat) {
             $message = new GroupMessage();
             $message->user_id = $request->user_id;
@@ -87,9 +86,9 @@ class GroupChatController extends Controller
         }
     }
 
-    public function messageList(Request $request)
+    public function messageList($post_id)
     {
-        $messageList = GroupMessage::get();
+        $messageList = GroupMessage::where('post_id', $post_id)->get();
 
         if ($messageList->isEmpty()) {
             return response()->json([
@@ -115,7 +114,7 @@ class GroupChatController extends Controller
                 $postId->delete();
                 return response()->json([
                     'status' => true,
-                    'action' => 'User leave this groupchat',
+                    'action' => 'User leave this group',
                 ]);
             } else {
                 return response()->json([

@@ -25,26 +25,35 @@ class PostController extends Controller
         $coverString = implode(',', $imagePaths);
 
         $addPost = new Post();
-        $addPost->user_id = $request->user_id;
-        $addPost->cover_image = $coverString;
-        $addPost->title = $request->title;
-        $addPost->category = $request->category;
-        $addPost->organizedBy = $request->organizedBy;
-        $addPost->start_date = $request->start_date;
-        $addPost->end_date = $request->end_date;
-        $addPost->all_day = $request->all_day;
-        $addPost->start_time = $request->start_time;
-        $addPost->end_time = $request->end_time;
-        $addPost->availability = $request->availability;
-        $addPost->repeat = $request->repeat;
-        $addPost->audience_limit = $request->audience_limit;
-        $addPost->event_price = $request->event_price;
-        $addPost->password = $request->password;
-        $addPost->city = $request->city;
-        $addPost->address = $request->address;
-        $addPost->website = $request->website;
-        $addPost->registration_link = $request->registration_link;
-        $addPost->zoom_link = $request->zoom_link;
+        $addPost->user_id = $request->user_id ?? '';
+        $addPost->cover_image = $coverString ?? '';
+        $addPost->title = $request->title ?? '';
+        $addPost->category = $request->category ?? '';
+        $addPost->organizedBy = $request->organizedBy ?? '';
+        $addPost->start_date = $request->start_date ?? '';
+        $addPost->end_date = $request->end_date ?? '';
+        $addPost->all_day = $request->all_day ?? '';
+        $addPost->start_time = $request->start_time ?? '';
+        $addPost->end_time = $request->end_time ?? '';
+        $addPost->availability = $request->availability ?? '';
+        $addPost->repeat = $request->repeat ?? '';
+        $addPost->audience_limit = $request->audience_limit ?? '';
+        $addPost->event_price = $request->event_price ?? '';
+        $addPost->password = $request->password ?? '';
+        $addPost->city = $request->city ?? '';
+        $addPost->address = $request->address ?? '';
+        $addPost->website = $request->website ?? '';
+        $addPost->registration_link = $request->registration_link ?? '';
+        $addPost->zoom_link = $request->zoom_link ?? '';
+        if ($request->location) {
+            $addPost->location = $request->location;
+            $addPost->lat = $request->lat;
+            $addPost->lng = $request->lng;
+        } else {
+            $addPost->location = '';
+            $addPost->lat = '';
+            $addPost->lng = '';
+        }
 
         $images = $request->file('upload_images');
         $imagePaths = [];
@@ -57,7 +66,7 @@ class PostController extends Controller
             }
         }
         $uploadString = implode(',', $imagePaths);
-        $addPost->upload_images = $uploadString;
+        $addPost->upload_images = $uploadString ?? '';
 
         $attachment = $request->file('attachments');
         $imagePaths = [];
@@ -70,8 +79,8 @@ class PostController extends Controller
             }
         }
         $attachmentString = implode(',', $imagePaths);
-        $addPost->attachments = $attachmentString;
-        $addPost->description = $request->description;
+        $addPost->attachments = $attachmentString ?? '';
+        $addPost->description = $request->description ?? '';
         $addPost->save();
         return response()->json([
             'status' => true,

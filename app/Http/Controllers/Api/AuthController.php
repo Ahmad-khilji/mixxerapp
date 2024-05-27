@@ -206,6 +206,7 @@ class AuthController extends Controller
             $user->email = $request->email;
             $user->platform = $request->platform;
             $user->platform_id = $request->platform_id;
+            $user->timezone = $request->timezone;
             $user->save();
 
             $userdevice = new UserDevice();
