@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\EditPostRequest;
 use App\Http\Requests\Api\PostRequest;
 use App\Models\Post;
 use App\Models\User;
@@ -89,6 +90,96 @@ class PostController extends Controller
         ]);
     }
 
+
+    public function editPost(EditPostRequest $request)
+    {
+        $updatePost = Post::find($request->post_id);
+        if (!$updatePost) {
+            return response()->json([
+                'status' => false,
+                'action' => 'Post not found',
+            ]);
+        }
+    
+        if ($request->has('title')) {
+            $updatePost->title = $request->title;
+        }
+        if ($request->has('organizedBy')) {
+            $updatePost->organizedBy = $request->organizedBy;
+        }
+        if ($request->has('all_day')) {
+            $updatePost->all_day = $request->all_day;
+        }
+        if ($request->has('availability')) {
+            $updatePost->availability = $request->availability;
+        }
+        if ($request->has('repeat')) {
+            $updatePost->repeat = $request->repeat;
+        }
+        if ($request->has('audience_limit')) {
+            $updatePost->audience_limit = $request->audience_limit;
+        }
+        if ($request->has('event_price')) {
+            $updatePost->event_price = $request->event_price;
+        }
+        if ($request->has('start_time')) {
+            $updatePost->start_time = $request->start_time;
+        }
+        if ($request->has('end_time')) {
+            $updatePost->end_time = $request->end_time;
+        }
+        if ($request->has('start_date')) {
+            $updatePost->start_date = $request->start_date;
+        }
+        if ($request->has('end_date')) {
+            $updatePost->end_date = $request->end_date;
+        }
+        if ($request->has('location') && $request->location) {
+            $updatePost->location = $request->location;
+            if ($request->has('lat') && $request->lat) {
+                $updatePost->lat = $request->lat;
+            }
+            if ($request->has('lng') && $request->lng) {
+                $updatePost->lng = $request->lng;
+            }
+        }
+    
+        if ($request->hasFile('cover_image')) {
+            $coverImage = $request->file('cover_image');
+            $coverImagePath = $this->uploadImage($coverImage, $request->user_id, 'post');
+            $updatePost->cover_image = $coverImagePath;
+        }
+  
+        if ($request->hasFile('upload_images')) {
+            $uploadImages = $request->file('upload_images');
+            $uploadImagesPaths = [];
+            foreach ($uploadImages as $image) {
+                $imagePath = $this->uploadImage($image, $request->user_id, 'post');
+                $uploadImagesPaths[] = $imagePath;
+            }
+            $updatePost->upload_images = implode(',', $uploadImagesPaths);
+        }
+    
+        if ($request->hasFile('attachments')) {
+            $attachments = $request->file('attachments');
+            $attachmentsPaths = [];
+            foreach ($attachments as $attachment) {
+                $attachmentPath = $this->uploadImage($attachment, $request->user_id, 'attachment');
+                $attachmentsPaths[] = $attachmentPath;
+            }
+            $updatePost->attachments = implode(',', $attachmentsPaths);
+        }
+    
+        $updatePost->save();
+    
+        return response()->json([
+            'status' => true,
+            'action' => 'Post updated successfully',
+            'data' =>  $updatePost,
+        ]);
+    }
+
+
     public function delete($post_id)
     {
         $post = Post::find($post_id);
@@ -123,7 +214,7 @@ class PostController extends Controller
 
     public function postDetails($post_id)
     {
-        $post = Post::with(['participants' => function($query) {
+        $post = Post::with(['participants' => function ($query) {
             $query->where('status', 1);
         }])->find($post_id);
 
@@ -140,11 +231,11 @@ class PostController extends Controller
             ]);
         }
     }
-    
+
 
     public function search($name)
     {
-        $posts = Post::select('user_id', 'title', 'city','category','cover_image','start_date','end_date')
+        $posts = Post::select('user_id', 'title', 'city', 'category', 'cover_image', 'start_date', 'end_date')
             ->where('title', 'like', '%' . $name . '%')
             ->orWhere('city', 'like', '%' . $name . '%')
             ->get();
@@ -155,5 +246,4 @@ class PostController extends Controller
             'data' => $posts
         ]);
     }
-
 }

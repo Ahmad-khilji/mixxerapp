@@ -287,31 +287,87 @@ class UserController extends Controller
     public function home($user_id)
     {
         $user = User::where('uuid', $user_id)->first();
-
-        if ($user) {
-            $posts = Post::where('location', '<=', 50)->get();
-            // return($posts);
-            $friends = Friend::where('user_id', $user_id)->get();
-            // return($friends);
-            if ($friends->isNotEmpty()) {
-
-                $friendIds = $friends->pluck('friend_id');
-                // return($friendIds);
-                $friendPosts = Post::whereIn('user_id', $friendIds)->get();
-                $posts = $posts->merge($friendPosts);
-                // return($posts);
-            }
-
-            return response()->json([
-                'status' => true,
-                'action' => 'Home',
-                'data' => $posts,
-            ]);
-        } else {
+    
+        if (!$user) {
             return response()->json([
                 'status' => false,
                 'action' => 'User not found',
             ]);
         }
+    
+        $friends = Friend::where('user_id', $user_id)->get();
+        $friendPosts = collect();
+    
+        if ($friends->isNotEmpty()) {
+            $friendIds = $friends->pluck('friend_id');
+            $friendPosts = Post::selectRaw("
+                posts.*,
+                (6371 * acos(cos(radians(?)) *
+                cos(radians(lat)) *
+                cos(radians(lng) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(lat)))) AS distance
+            ", [$user->lat, $user->lng, $user->lat])
+                ->whereIn('user_id', $friendIds)
+                ->get();
+        }
+    
+        $latitude = (float)$user->lat;
+        $longitude = (float)$user->lng;
+        $radius = 10; 
+    
+        $nearbyPosts = Post::selectRaw("
+            posts.*,
+            (6371 * acos(cos(radians(?)) *
+            cos(radians(lat)) *
+            cos(radians(lng) - radians(?)) +
+            sin(radians(?)) *
+            sin(radians(lat)))) AS distance
+        ", [$latitude, $longitude, $latitude])
+            ->having('distance', '<', $radius)
+            ->orderBy('distance')
+            ->get();
+    
+        $allPosts = $friendPosts->merge($nearbyPosts)->unique('id');
+    
+        return response()->json([
+            'status' => true,
+            'action' => 'Home',
+            'data' => $allPosts->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'user_id' => $post->user_id,
+                    'cover_image' => $post->cover_image,
+                    'title' => $post->title,
+                    'category' => $post->category,
+                    'organizedBy' => $post->organizedBy,
+                    'start_date' => $post->start_date,
+                    'end_date' => $post->end_date,
+                    'all_day' => $post->all_day,
+                    'start_time' => $post->start_time,
+                    'end_time' => $post->end_time,
+                    'availability' => $post->availability,
+                    'repeat' => $post->repeat,
+                    'audience_limit' => $post->audience_limit,
+                    'event_price' => $post->event_price,
+                    'password' => $post->password,
+                    'city' => $post->city,
+                    'address' => $post->address,
+                    'website' => $post->website,
+                    'registration_link' => $post->registration_link,
+                    'zoom_link' => $post->zoom_link,
+                    'upload_images' => $post->upload_images,
+                    'attachments' => $post->attachments,
+                    'description' => $post->description,
+                    'location' => $post->location,
+                    'lat' => $post->lat,
+                    'lng' => $post->lng,
+                    'distance' => $post->distance,
+                ];
+            }),
+        ]);
     }
+    
+
+
 }

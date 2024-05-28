@@ -66,6 +66,7 @@ Route::get('interests' ,[ TicketController::class, 'interests']);
 Route::post('add/report', [ReportController::class, 'report']);
 
 Route::post('create/post' ,[ PostController::class, 'createPost']);
+Route::post('edit/post' ,[ PostController::class, 'editPost']);
 Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost']);
 Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
 Route::get('/post/{post_id}/details', [PostController::class, 'postDetails']);
