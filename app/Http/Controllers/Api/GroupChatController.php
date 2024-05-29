@@ -151,4 +151,23 @@ class GroupChatController extends Controller
             'data' => $posts,
         ]);
     }
+    public function participantList($post_id)
+    {
+        $participants = Participant::where('post_id', $post_id)
+            ->where('status', 1)
+            ->get();
+
+        if ($participants->isNotEmpty()) {
+            return response()->json([
+                'status' => true,
+                'action' => 'Participant List',
+                'data' => $participants,
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'No Participants Found',
+            ]);
+        }
+    }
 }

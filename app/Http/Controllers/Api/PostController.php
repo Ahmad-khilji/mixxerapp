@@ -100,7 +100,7 @@ class PostController extends Controller
                 'action' => 'Post not found',
             ]);
         }
-    
+
         if ($request->has('title')) {
             $updatePost->title = $request->title;
         }
@@ -143,13 +143,13 @@ class PostController extends Controller
                 $updatePost->lng = $request->lng;
             }
         }
-    
+
         if ($request->hasFile('cover_image')) {
             $coverImage = $request->file('cover_image');
             $coverImagePath = $this->uploadImage($coverImage, $request->user_id, 'post');
             $updatePost->cover_image = $coverImagePath;
         }
-  
+
         if ($request->hasFile('upload_images')) {
             $uploadImages = $request->file('upload_images');
             $uploadImagesPaths = [];
@@ -159,7 +159,7 @@ class PostController extends Controller
             }
             $updatePost->upload_images = implode(',', $uploadImagesPaths);
         }
-    
+
         if ($request->hasFile('attachments')) {
             $attachments = $request->file('attachments');
             $attachmentsPaths = [];
@@ -169,9 +169,9 @@ class PostController extends Controller
             }
             $updatePost->attachments = implode(',', $attachmentsPaths);
         }
-    
+
         $updatePost->save();
-    
+
         return response()->json([
             'status' => true,
             'action' => 'Post updated successfully',
@@ -219,6 +219,9 @@ class PostController extends Controller
         }])->find($post_id);
 
         if ($post) {
+        $hostBy = User::where('uuid', $post->user_id)->first();
+        // return( $hostBy);
+        $post->hostBy = $hostBy;
             return response()->json([
                 'status' => true,
                 'action' => 'Post Details',

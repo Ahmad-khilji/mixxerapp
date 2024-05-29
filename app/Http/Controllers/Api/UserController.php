@@ -11,9 +11,9 @@ use App\Http\Requests\Api\SocialConnectRequest;
 use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\Block;
 use App\Models\Friend;
+use App\Models\Participant;
 use App\Models\Post;
 use App\Models\SocialConnect;
-
 use App\Models\User;
 use App\Models\UserMessage;
 use Illuminate\Http\Request;
@@ -26,18 +26,23 @@ class UserController extends Controller
         if ($request->user_id == $request->to_id) {
             $user = User::where('uuid', $request->user_id)->first();
 
-            $posts = Post::where('user_id', $user->uuid)->get();
+            $posts = Post::where('user_id', $user->uuid)->count();
             // return($posts);
 
-            $user->posts = $posts;
-            $friendsList = Friend::where('user_id', $user->uuid)->get();
-            $user->friendsList = $friendsList;
+            $user->hostBy = $posts;
+            $participant = Participant::where('user_id', $user->uuid)->where('status', 1)->count();
+            $user->join = $participant;
+            $friendsList = Friend::where('user_id', $user->uuid)->count();
+            $user->friends = $friendsList;
         } else {
             $user = User::where('uuid', $request->to_id)->first();
-            $posts = Post::where('user_id', $user->uuid)->get();
-            $user->posts = $posts;
-            $friendsList = Friend::where('user_id', $user->uuid)->get();
-            $user->friendsList = $friendsList;
+            $posts = Post::where('user_id', $user->uuid)->count();
+            $user->hostBy = $posts;
+            $participant = Participant::where('user_id', $user->uuid)->where('status', 1)->count();
+            $user->join = $participant;
+            
+            $friendsList = Friend::where('user_id', $user->uuid)->count();
+            $user->friends = $friendsList;
         }
         return response()->json([
             'status' => true,
@@ -287,17 +292,17 @@ class UserController extends Controller
     public function home($user_id)
     {
         $user = User::where('uuid', $user_id)->first();
-    
+
         if (!$user) {
             return response()->json([
                 'status' => false,
                 'action' => 'User not found',
             ]);
         }
-    
+
         $friends = Friend::where('user_id', $user_id)->get();
         $friendPosts = collect();
-    
+
         if ($friends->isNotEmpty()) {
             $friendIds = $friends->pluck('friend_id');
             $friendPosts = Post::selectRaw("
@@ -311,11 +316,11 @@ class UserController extends Controller
                 ->whereIn('user_id', $friendIds)
                 ->get();
         }
-    
-        $latitude = (float)$user->lat;
-        $longitude = (float)$user->lng;
-        $radius = 10; 
-    
+
+        $latitude = $user->lat;
+        $longitude = $user->lng;
+        $radius = 10;
+
         $nearbyPosts = Post::selectRaw("
             posts.*,
             (6371 * acos(cos(radians(?)) *
@@ -327,9 +332,9 @@ class UserController extends Controller
             ->having('distance', '<', $radius)
             ->orderBy('distance')
             ->get();
-    
+
         $allPosts = $friendPosts->merge($nearbyPosts)->unique('id');
-    
+
         return response()->json([
             'status' => true,
             'action' => 'Home',
@@ -367,7 +372,4 @@ class UserController extends Controller
             }),
         ]);
     }
-    
-
-
 }
