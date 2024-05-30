@@ -8,14 +8,12 @@ use App\Http\Requests\Api\EditProfileRequest;
 use App\Http\Requests\Api\ProfileRequest;
 use App\Http\Requests\Api\RemoveSocialRequest;
 use App\Http\Requests\Api\SocialConnectRequest;
-use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\Block;
 use App\Models\Friend;
 use App\Models\Participant;
 use App\Models\Post;
 use App\Models\SocialConnect;
 use App\Models\User;
-use App\Models\UserMessage;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -26,21 +24,38 @@ class UserController extends Controller
         if ($request->user_id == $request->to_id) {
             $user = User::where('uuid', $request->user_id)->first();
 
-            $posts = Post::where('user_id', $user->uuid)->count();
-            // return($posts);
+            $posts = Post::where('user_id', $user->uuid)->get();
+            $count = $posts->count();
+            $user->hostBy = $count;
+            $user->hostbyposts = $posts;
 
-            $user->hostBy = $posts;
-            $participant = Participant::where('user_id', $user->uuid)->where('status', 1)->count();
-            $user->join = $participant;
+            $participants = Participant::where('user_id', $user->uuid)
+                ->where('status', 1)
+                ->get();
+            $count = $participants->count();
+            $user->join = $count;
+            $user->participants = $participants;
+
             $friendsList = Friend::where('user_id', $user->uuid)->count();
             $user->friends = $friendsList;
         } else {
             $user = User::where('uuid', $request->to_id)->first();
-            $posts = Post::where('user_id', $user->uuid)->count();
-            $user->hostBy = $posts;
-            $participant = Participant::where('user_id', $user->uuid)->where('status', 1)->count();
-            $user->join = $participant;
-            
+            $posts = Post::where('user_id', $user->uuid)->get();
+            $count = $posts->count();
+            $user->hostBy = $count;
+            $user->hostbyposts = $posts;
+
+            $participants = Participant::where('user_id', $user->uuid)
+                ->where('status', 1)
+                ->with('post')
+                ->get();
+
+            $count = $participants->count();
+            $user->join = $count;
+            $user->joinpost = $participants;
+
+
+
             $friendsList = Friend::where('user_id', $user->uuid)->count();
             $user->friends = $friendsList;
         }
@@ -243,133 +258,6 @@ class UserController extends Controller
             'status' => true,
             'action' => 'Block listed',
             'data' => $user,
-        ]);
-    }
-
-
-    public function userMessage(UserMessageRequest $request)
-    {
-        $fromUser = User::where('uuid', $request->from)->first();
-        $toUser = User::where('uuid', $request->to)->first();
-
-        if (!$fromUser || !$toUser) {
-            return response()->json([
-                'status' => false,
-                'action' => 'User not found',
-            ]);
-        }
-        $userMessage = new UserMessage();
-        $userMessage->from = $request->from;
-        $userMessage->to = $request->to;
-        $userMessage->message = $request->message;
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '-' . uniqid() . '.' . $extension;
-            if ($file->move('uploads/user/'  . '/usermessageimage/', $filename)) {
-                $userMessage->image = '/uploads/user/' . '/usermessageimage/' . $filename;
-            }
-        }
-        $userMessage->save();
-
-        return response()->json([
-            'status' => true,
-            'action' => 'Message sent from user to another user',
-        ]);
-    }
-
-    public function usermessageList()
-    {
-        $userMessage = userMessage::get();
-        return response()->json([
-            'status' => true,
-            'action' => 'User message listed',
-            'data' => $userMessage,
-        ]);
-    }
-
-    public function home($user_id)
-    {
-        $user = User::where('uuid', $user_id)->first();
-
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'action' => 'User not found',
-            ]);
-        }
-
-        $friends = Friend::where('user_id', $user_id)->get();
-        $friendPosts = collect();
-
-        if ($friends->isNotEmpty()) {
-            $friendIds = $friends->pluck('friend_id');
-            $friendPosts = Post::selectRaw("
-                posts.*,
-                (6371 * acos(cos(radians(?)) *
-                cos(radians(lat)) *
-                cos(radians(lng) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(lat)))) AS distance
-            ", [$user->lat, $user->lng, $user->lat])
-                ->whereIn('user_id', $friendIds)
-                ->get();
-        }
-
-        $latitude = $user->lat;
-        $longitude = $user->lng;
-        $radius = 10;
-
-        $nearbyPosts = Post::selectRaw("
-            posts.*,
-            (6371 * acos(cos(radians(?)) *
-            cos(radians(lat)) *
-            cos(radians(lng) - radians(?)) +
-            sin(radians(?)) *
-            sin(radians(lat)))) AS distance
-        ", [$latitude, $longitude, $latitude])
-            ->having('distance', '<', $radius)
-            ->orderBy('distance')
-            ->get();
-
-        $allPosts = $friendPosts->merge($nearbyPosts)->unique('id');
-
-        return response()->json([
-            'status' => true,
-            'action' => 'Home',
-            'data' => $allPosts->map(function ($post) {
-                return [
-                    'id' => $post->id,
-                    'user_id' => $post->user_id,
-                    'cover_image' => $post->cover_image,
-                    'title' => $post->title,
-                    'category' => $post->category,
-                    'organizedBy' => $post->organizedBy,
-                    'start_date' => $post->start_date,
-                    'end_date' => $post->end_date,
-                    'all_day' => $post->all_day,
-                    'start_time' => $post->start_time,
-                    'end_time' => $post->end_time,
-                    'availability' => $post->availability,
-                    'repeat' => $post->repeat,
-                    'audience_limit' => $post->audience_limit,
-                    'event_price' => $post->event_price,
-                    'password' => $post->password,
-                    'city' => $post->city,
-                    'address' => $post->address,
-                    'website' => $post->website,
-                    'registration_link' => $post->registration_link,
-                    'zoom_link' => $post->zoom_link,
-                    'upload_images' => $post->upload_images,
-                    'attachments' => $post->attachments,
-                    'description' => $post->description,
-                    'location' => $post->location,
-                    'lat' => $post->lat,
-                    'lng' => $post->lng,
-                    'distance' => $post->distance,
-                ];
-            }),
         ]);
     }
 }

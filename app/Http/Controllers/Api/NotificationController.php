@@ -13,6 +13,7 @@ class NotificationController extends Controller
     public function notificationSend(SendNotificationRequest $request)
     {
         $user = User::where('uuid', $request->user_id)->first();
+
         if ($user) {
             $newNotification = new Notification();
             $newNotification->user_id = $request->user_id;
@@ -23,18 +24,29 @@ class NotificationController extends Controller
                 'status' => true,
                 'action' => 'Notification sent successfully',
                 'notification' => $newNotification,
+                'user' => [
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'profile_image' => $user->profile_image,
+                ],
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'No found userid',
+                'action' => 'User not found',
             ]);
         }
     }
 
+
     public function notificationsList(Request $request)
     {
         $notifications = Notification::get();
+        foreach ($notifications as $notification) {
+            $user = User::where('uuid', $notification->user_id)->first(['first_name', 'last_name', 'profile_image']);
+            $notification->user = $user;
+        }
+
         return response()->json([
             'status' => true,
             'action' => 'Notifications listed successfully',
@@ -44,9 +56,7 @@ class NotificationController extends Controller
 
     public function markasRead(Request $request)
     {
-
-        $notification = Notification::where('id', $request->notification_id)
-            ->where('user_id', $request->user_id)
+        $notification = Notification::where('user_id', $request->user_id)
             ->first();
 
         if ($notification) {
@@ -61,7 +71,7 @@ class NotificationController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'action' => 'Notification not found',
+                'action' => 'UserId not found',
             ]);
         }
     }

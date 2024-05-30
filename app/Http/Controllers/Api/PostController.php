@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\EditPostRequest;
 use App\Http\Requests\Api\PostRequest;
+use App\Models\Friend;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -236,11 +238,56 @@ class PostController extends Controller
     }
 
 
-    public function search($name)
+    public function home(Request $request)
+    {
+        $user = User::where('uuid', $request->user_id)->first();
+        
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'action' => 'User not found',
+            ]);
+        }
+        
+        $friends = Friend::where('user_id', $user->uuid)->limit(12)->get();
+        $friendPosts = collect();
+        $friendIds = collect();
+        
+        if ($friends->isNotEmpty()) {
+            $friendIds = $friends->pluck('friend_id');
+            $friendPosts = Post::whereIn('user_id', $friendIds)->limit(12)->get();
+        }
+    
+        $radius = $request->radius; 
+    
+        $nearbyPosts = Post::selectRaw("
+            posts.*, 
+            (6371 * acos(cos(radians(?)) * 
+            cos(radians(lat)) * 
+            cos(radians(lng) - radians(?)) + 
+            sin(radians(?)) * 
+            sin(radians(lat)))) AS distance
+        ", [$user->lat, $user->lng, $user->lat])
+            ->whereNotIn('user_id', $friendIds->toArray())
+            ->havingRaw('distance < ?', [$radius])
+            ->orderBy('distance')
+            ->get();
+    
+        return response()->json([
+            'status' => true,
+            'action' => 'Home',
+            'data' => [
+                'friendPosts' => $friendPosts,
+                'nearByPosts' => $nearbyPosts
+            ]
+        ]);
+    }
+
+    public function search(Request $request)
     {
         $posts = Post::select('user_id', 'title', 'city', 'category', 'cover_image', 'start_date', 'end_date')
-            ->where('title', 'like', '%' . $name . '%')
-            ->orWhere('city', 'like', '%' . $name . '%')
+            ->where('title', 'like', '%' . $request->name . '%')
+            ->orWhere('city', 'like', '%' . $request->name . '%')
             ->get();
 
         return response()->json([

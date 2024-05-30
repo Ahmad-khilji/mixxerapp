@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SendMessageGroup;
+use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\GroupMessage;
 use App\Models\Participant;
 use App\Models\Post;
+use App\Models\User;
+use App\Models\UserMessage;
+use Illuminate\Http\Request;
 
-class GroupChatController extends Controller
+class ChatController extends Controller
 {
 
     public function requestParticipation($post_id, $user_id)
@@ -53,6 +57,28 @@ class GroupChatController extends Controller
         ]);
     }
 
+    public function participantList(Request $request)
+    {
+        $participants = Participant::where('post_id', $request->post_id)
+            ->where('status', 1)
+            ->limit(12)->get();
+        foreach ($participants as $participant) {
+            $participant->user = User::where('uuid', $participant->user_id)->first(['uuid', 'first_name', 'profile_image', 'location']);
+        }
+        if ($participants->isNotEmpty()) {
+            return response()->json([
+                'status' => true,
+                'action' => 'Participant List',
+                'data' => $participants,
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'action' => 'No Participants Found',
+            ]);
+        }
+    }
+
     public function sendMessageGroup(sendMessageGroup $request)
     {
         $groupChat = Participant::where('user_id', $request->user_id)->where('post_id', $request->post_id)->where('status', 1)->first();
@@ -76,7 +102,6 @@ class GroupChatController extends Controller
             return response()->json([
                 'status' => true,
                 'action' => 'Message sent successfully',
-                'message' => $message
             ]);
         } else {
             return response()->json([
@@ -86,30 +111,34 @@ class GroupChatController extends Controller
         }
     }
 
-    public function messageList($post_id)
+    public function groupMessageList($post_id)
     {
         $messageList = GroupMessage::where('post_id', $post_id)->get();
-
+    
         if ($messageList->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'action' => 'No messages found for this group',
             ]);
         }
-
+        foreach($messageList as $message) {
+            $user = User::where('uuid', $message->user_id)->first(['first_name', 'last_name', 'profile_image']);
+            $message->user = $user;
+        }
+    
         return response()->json([
             'status' => true,
             'action' => 'Group messages listed',
             'data' => $messageList,
         ]);
     }
+    
 
-    public function userleaveGroup($post_id, $user_id)
+    public function userleaveGroup(Request $request)
     {
-
-        $leftGroup =  GroupMessage::where('user_id', $user_id);
+        $leftGroup =  GroupMessage::where('user_id', $request->user_id);
         if ($leftGroup) {
-            $postId =  GroupMessage::where('post_id', $post_id);
+            $postId =  GroupMessage::where('post_id', $request->post_id);
             if ($postId) {
                 $postId->delete();
                 return response()->json([
@@ -129,6 +158,51 @@ class GroupChatController extends Controller
             ]);
         }
     }
+
+   
+
+    public function userMessage(UserMessageRequest $request)
+    {
+        $fromUser = User::where('uuid', $request->from)->first();
+        $toUser = User::where('uuid', $request->to)->first();
+
+        if (!$fromUser || !$toUser) {
+            return response()->json([
+                'status' => false,
+                'action' => 'User not found',
+            ]);
+        }
+        $userMessage = new UserMessage();
+        $userMessage->from = $request->from;
+        $userMessage->to = $request->to;
+        $userMessage->message = $request->message;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '-' . uniqid() . '.' . $extension;
+            if ($file->move('uploads/user/'  . '/usermessageimage/', $filename)) {
+                $userMessage->image = '/uploads/user/' . '/usermessageimage/' . $filename;
+            }
+        }
+        $userMessage->save();
+
+        return response()->json([
+            'status' => true,
+            'action' => 'Message sent from user to another user',
+        ]);
+    }
+
+    public function usermessageList()
+    {
+        $userMessage = userMessage::get();
+        return response()->json([
+            'status' => true,
+            'action' => 'User message listed',
+            'data' => $userMessage,
+        ]);
+    }
+
 
     public function participantpostList($user_id)
     {
@@ -151,23 +225,5 @@ class GroupChatController extends Controller
             'data' => $posts,
         ]);
     }
-    public function participantList($post_id)
-    {
-        $participants = Participant::where('post_id', $post_id)
-            ->where('status', 1)
-            ->get();
 
-        if ($participants->isNotEmpty()) {
-            return response()->json([
-                'status' => true,
-                'action' => 'Participant List',
-                'data' => $participants,
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'action' => 'No Participants Found',
-            ]);
-        }
-    }
 }

@@ -78,13 +78,17 @@ class FriendRequestController extends Controller
             'action' => 'Removed friend.',
         ]);
     }
-    public function friendList(Request $request) {
-    $friendList = Friend::where('user_id', $request->user_id)->get();
-    if (!$friendList) {
+    public function friendList(Request $request)
+    {
+        $friendList = Friend::where('user_id', $request->user_id)->get();
+        if (!$friendList) {
             return response()->json([
                 'status' => false,
                 'action' => 'User not found.'
             ]);
+        }
+        foreach ($friendList as $friend) {
+            $friend->friendList = User::where('uuid', $friend->friend_id)->first();
         }
         return response()->json([
             'status' => true,

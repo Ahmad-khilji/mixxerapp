@@ -1,15 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FriendRequestController;
-use App\Http\Controllers\Api\GroupChatController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Requests\Api\TicketRequest;
-use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,10 +46,8 @@ Route::post('user/remove/social/connect' ,[ UserController::class, 'removeSocial
 Route::get('user/social/connect/list/{id}' ,[ UserController::class, 'socialList']);
 Route::post('user/block' ,[ UserController::class, 'block']);
 Route::get('user/block/list/{id}' ,[ UserController::class, 'blockList']);
-Route::post('users/message', [UserController::class, 'userMessage']);
-Route::get('users/message/list', [UserController::class, 'usermessageList']);
 Route::post('join', [UserController::class, 'participent']);
-Route::get('/home/{user_id}', [UserController::class, 'home']);
+
 
 Route::post('ticket' ,[ TicketController::class, 'ticket']);
 Route::get('ticket/list/{id}/{status}' ,[ TicketController::class, 'list']);
@@ -70,16 +66,19 @@ Route::post('edit/post' ,[ PostController::class, 'editPost']);
 Route::get('save/post/{post_id}/{user_id}', [PostController::class, 'savePost']);
 Route::get('post/delete/{post_id}', [PostController::class, 'delete']);
 Route::get('/post/{post_id}/details', [PostController::class, 'postDetails']);
-Route::get('search/{name}', [PostController::class, 'search']);
+Route::post('/home', [PostController::class, 'home']);
+Route::post('search', [PostController::class, 'search']);
 
-Route::post('/participant/request/{post_id}/{user_id}', [GroupChatController::class, 'requestParticipation']);
-Route::post('/participant/accept/{participant_id}', [GroupChatController::class, 'acceptParticipation']);
-Route::get('/participant/list', [GroupChatController::class, 'listPaticipant']);
-Route::post('message/send/group', [GroupChatController::class, 'sendMessageGroup']);
-Route::get('group/message/list/{post_id}', [GroupChatController::class, 'messageList']);
-Route::get('user/left/group/{post_id}/{user_id}', [GroupChatController::class, 'userleaveGroup']);
-Route::get('participant/post/list/{user_id}', [GroupChatController::class, 'participantpostList']);
-Route::get('participant/list/{post_id}', [GroupChatController::class, 'participantList']);
+Route::post('/participant/request/{post_id}/{user_id}', [ChatController::class, 'requestParticipation']);
+Route::post('/participant/accept/{participant_id}', [ChatController::class, 'acceptParticipation']);
+Route::get('/participant/list', [ChatController::class, 'listPaticipant']);
+Route::post('message/send/group', [ChatController::class, 'sendMessageGroup']);
+Route::get('group/message/list/{post_id}', [ChatController::class, 'groupMessageList']);
+Route::post('user/left/group', [ChatController::class, 'userleaveGroup']);
+Route::get('participant/post/list/{user_id}', [ChatController::class, 'participantpostList']);
+Route::post('participant/list', [ChatController::class, 'participantList']);
+Route::post('users/message', [ChatController::class, 'userMessage']);
+Route::get('users/message/list', [ChatController::class, 'usermessageList']);
 
 
 Route::post('send/request', [FriendRequestController::class, 'sendRequest']);
