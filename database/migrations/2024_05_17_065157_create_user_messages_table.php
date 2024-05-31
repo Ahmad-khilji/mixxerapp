@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('from');
             $table->string('to');
             $table->string('message');
+            $table->boolean('is_read')->default(0);
             $table->string('image')->default('');
             $table->timestamps();
         });

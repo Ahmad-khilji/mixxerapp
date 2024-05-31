@@ -29,12 +29,10 @@ class UserController extends Controller
             $user->hostBy = $count;
             $user->hostbyposts = $posts;
 
-            $participants = Participant::where('user_id', $user->uuid)
-                ->where('status', 1)
-                ->get();
-            $count = $participants->count();
-            $user->join = $count;
-            $user->participants = $participants;
+            $participants = Participant::where('user_id', $user->uuid)->where('status', 1)->with('post')->get();
+
+            $user->join =$participants->count();
+            $user->joinpost = $participants;
 
             $friendsList = Friend::where('user_id', $user->uuid)->count();
             $user->friends = $friendsList;
@@ -45,19 +43,14 @@ class UserController extends Controller
             $user->hostBy = $count;
             $user->hostbyposts = $posts;
 
-            $participants = Participant::where('user_id', $user->uuid)
-                ->where('status', 1)
-                ->with('post')
-                ->get();
+            $participants = Participant::where('user_id', $user->uuid)->where('status', 1)->with('post')->get();
 
-            $count = $participants->count();
-            $user->join = $count;
+            $user->join =$participants->count();
             $user->joinpost = $participants;
-
-
-
+            
             $friendsList = Friend::where('user_id', $user->uuid)->count();
             $user->friends = $friendsList;
+
         }
         return response()->json([
             'status' => true,

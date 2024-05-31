@@ -57,7 +57,7 @@ class NotificationController extends Controller
     public function markasRead(Request $request)
     {
         $notification = Notification::where('user_id', $request->user_id)
-            ->first();
+            ->latest()->first();
 
         if ($notification) {
             $notification->is_read = 1;

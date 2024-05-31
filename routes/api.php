@@ -78,6 +78,7 @@ Route::post('user/left/group', [ChatController::class, 'userleaveGroup']);
 Route::get('participant/post/list/{user_id}', [ChatController::class, 'participantpostList']);
 Route::post('participant/list', [ChatController::class, 'participantList']);
 Route::post('users/message', [ChatController::class, 'userMessage']);
+Route::post('conversation', [ChatController::class, 'conversation']);
 Route::get('users/message/list', [ChatController::class, 'usermessageList']);
 
 

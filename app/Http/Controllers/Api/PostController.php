@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\EditPostRequest;
 use App\Http\Requests\Api\PostRequest;
 use App\Models\Friend;
+use App\Models\Participant;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -216,14 +217,27 @@ class PostController extends Controller
 
     public function postDetails($post_id)
     {
-        $post = Post::with(['participants' => function ($query) {
-            $query->where('status', 1);
-        }])->find($post_id);
-
+        $post = Post::where('id', $post_id)->first();
         if ($post) {
-        $hostBy = User::where('uuid', $post->user_id)->first();
-        // return( $hostBy);
-        $post->hostBy = $hostBy;
+            $participants = Participant::where('post_id', $post_id)->where('status', 1)->get();
+            
+            $hostBy = User::where('uuid', $post->user_id)->first(['uuid', 'first_name', 'last_name', 'profile_image']);
+            $post->hostBy = $hostBy;
+    
+            if ($participants->isNotEmpty()) {
+                $participantsDetails = [];
+                foreach ($participants as $participant) {
+                    $user = User::where('uuid', $participant->user_id)->first(['first_name', 'profile_image']);
+                    if ($user) {
+                        $participant->user = $user;
+                        $participantsDetails[] = $participant;
+                    }
+                }
+                $post->participants = $participantsDetails;
+            } else {
+                $post->participants = [];
+            }
+    
             return response()->json([
                 'status' => true,
                 'action' => 'Post Details',
@@ -236,30 +250,31 @@ class PostController extends Controller
             ]);
         }
     }
+    
 
 
     public function home(Request $request)
     {
         $user = User::where('uuid', $request->user_id)->first();
-        
+
         if (!$user) {
             return response()->json([
                 'status' => false,
                 'action' => 'User not found',
             ]);
         }
-        
+
         $friends = Friend::where('user_id', $user->uuid)->limit(12)->get();
         $friendPosts = collect();
         $friendIds = collect();
-        
+
         if ($friends->isNotEmpty()) {
             $friendIds = $friends->pluck('friend_id');
             $friendPosts = Post::whereIn('user_id', $friendIds)->limit(12)->get();
         }
-    
-        $radius = $request->radius; 
-    
+
+        $radius = $request->radius;
+
         $nearbyPosts = Post::selectRaw("
             posts.*, 
             (6371 * acos(cos(radians(?)) * 
@@ -272,7 +287,7 @@ class PostController extends Controller
             ->havingRaw('distance < ?', [$radius])
             ->orderBy('distance')
             ->get();
-    
+
         return response()->json([
             'status' => true,
             'action' => 'Home',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\ConversationRequest;
 use App\Http\Requests\Api\SendMessageGroup;
 use App\Http\Requests\Api\UserMessageRequest;
 use App\Models\GroupMessage;
@@ -44,6 +45,12 @@ class ChatController extends Controller
         if ($participant) {
             $participant->status = 1;
             $participant->save();
+            $user = User::find($participant->user_id);
+            $participant->user = [
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'profile_image' => $user->profile_image,
+            ];
 
             return response()->json([
                 'status' => true,
@@ -51,11 +58,13 @@ class ChatController extends Controller
                 'data' => $participant,
             ]);
         }
+
         return response()->json([
             'status' => false,
             'action' => 'Participant Not Found',
         ]);
     }
+
 
     public function participantList(Request $request)
     {
@@ -114,25 +123,25 @@ class ChatController extends Controller
     public function groupMessageList($post_id)
     {
         $messageList = GroupMessage::where('post_id', $post_id)->get();
-    
+
         if ($messageList->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'action' => 'No messages found for this group',
             ]);
         }
-        foreach($messageList as $message) {
+        foreach ($messageList as $message) {
             $user = User::where('uuid', $message->user_id)->first(['first_name', 'last_name', 'profile_image']);
             $message->user = $user;
         }
-    
+
         return response()->json([
             'status' => true,
             'action' => 'Group messages listed',
             'data' => $messageList,
         ]);
     }
-    
+
 
     public function userleaveGroup(Request $request)
     {
@@ -159,7 +168,7 @@ class ChatController extends Controller
         }
     }
 
-   
+
 
     public function userMessage(UserMessageRequest $request)
     {
@@ -193,9 +202,27 @@ class ChatController extends Controller
         ]);
     }
 
+    public function conversation(ConversationRequest $request)
+    {
+        userMessage::where('from', $request->to)->where('to', $request->from)->where('is_read', 0)->update(['is_read' => 1]);
+        $messages = userMessage::where('from', $request->to)->where('to', $request->from)->get();
+
+        // $user = User::select('uuid', 'first_name', 'last_name', 'profile_image')->where('uuid', $request->to)->first();
+        // foreach ($messages as $message) {
+        //     $message->user = $user;
+        // }
+        return response()->json([
+            'status' => true,
+            'action' => 'Conversation',
+            'data' => $messages,
+        ]);
+    }
+    
+
     public function usermessageList()
     {
         $userMessage = userMessage::get();
+
         return response()->json([
             'status' => true,
             'action' => 'User message listed',
@@ -225,5 +252,4 @@ class ChatController extends Controller
             'data' => $posts,
         ]);
     }
-
 }
